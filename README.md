@@ -89,9 +89,10 @@ So you can setup the log module to use the default implementation or your own im
 
 ### 1. General Architecture
 
-This diagrams describes the general YouTransactor MPOS Android SDK architecture. Only the uCubeAPI methods and the RPC commands are public and you can call them. 
+This diagrams describes the general YouTransactor MPOS IOS SDK architecture. Only the uCubeAPI methods and the RPC commands are public and you can call them. 
 
-![sdk_architecture](https://user-images.githubusercontent.com/59020462/81673044-5489da80-944b-11ea-95a1-ffff128a43e9.png)
+
+![archi_sdk_mpos_ios](https://user-images.githubusercontent.com/59020462/86530495-6a4ed580-beb9-11ea-83c7-6d0b3a1fb666.png)
 
 ### 2. Transaction Flow : Contact
 
