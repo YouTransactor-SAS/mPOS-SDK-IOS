@@ -2,6 +2,7 @@
 
 ###### Release 1.0.0.0
 
+RED APPLE (&#x1F34E;): 🍎
  <style="color:red">Platform IOS API 10+</style>
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) `Platform IOS API 10+`
 
