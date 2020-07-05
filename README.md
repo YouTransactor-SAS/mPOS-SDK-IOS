@@ -92,7 +92,7 @@ So you can setup the log module to use the default implementation or your own im
 This diagrams describes the general YouTransactor MPOS IOS SDK architecture. Only the uCubeAPI methods and the RPC commands are public and you can call them. 
 
 
-![archi_sdk_mpos_ios](https://user-images.githubusercontent.com/59020462/86530495-6a4ed580-beb9-11ea-83c7-6d0b3a1fb666.png)
+![archi_sdk_mpos_ios](https://user-images.githubusercontent.com/59020462/86530543-d16c8a00-beb9-11ea-80b0-1dd8e927437e.png)
 
 ### 2. Transaction Flow : Contact
 
