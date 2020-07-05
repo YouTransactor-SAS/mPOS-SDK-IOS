@@ -2,8 +2,8 @@
 
 ###### Release 1.0.0.0
 
-<p align="center">
-  <img width="100" height="50" src="https://user-images.githubusercontent.com/59020462/86530321-20b1bb00-beb8-11ea-9e81-b2c1d794429a.png">
+<p>
+  <img width="350" height="40" src="https://user-images.githubusercontent.com/59020462/86530321-20b1bb00-beb8-11ea-9e81-b2c1d794429a.png">
 </p>
 
 This repository provides a step by step documentation for YouTransactor's native IOS SDK, that enables you to integrate our proprietary card terminal(s) to accept credit and debit card payments (incl. VISA, MasterCard, American Express and more). The relation between the mobile device and the card terminal is a Master-Slave relation, so the mobile device drives the card terminal by calling diffrent available commands. The main function of the SDK is to send RPC commands to the card terminal in order to drive it. The SDK provides also a payment, update and log APIs. 
