@@ -46,6 +46,11 @@ class MainViewController: UIViewController {
                     LogManager.debug(message: "No device found with identifier: \(identifier)")
                 }
             }
+//            BLEConnectionManager.shared.connect(identifier: identifier) { status in
+//                LogManager.debug(message: "Connection to identifier: \(identifier), status: \(status)")
+//            }
+            // You can connect directly with UCubeDevice
+//            BLEConnectionManager.shared.connect(device: device)
         }
         appVersionLabel.text = "UCube Example v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "")"
         frameworkVersionLabel.text = "UCube Framework v\(Bundle(for: BLEConnectionManager.self).infoDictionary?["CFBundleShortVersionString"] ?? "")"
