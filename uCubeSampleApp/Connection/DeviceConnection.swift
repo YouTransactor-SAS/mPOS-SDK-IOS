@@ -40,7 +40,8 @@ class DeviceConnection: ConnectionDelegate {
         disconnectCompletion?()
     }
     
-    func deviceDidFailToConnect(_ device: UCubeDevice) {
+    func deviceDidFailToConnect(_ device: UCubeDevice, error: Error?) {
+        LogManager.debug(message: "Device did fail to connect: \(error?.localizedDescription ?? "nil")")
         disconnectCompletion?()
     }
 }
