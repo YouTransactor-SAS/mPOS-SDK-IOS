@@ -76,7 +76,11 @@ class MenuTableViewController: AlertPresenterTableViewController {
             presentAlert(title: nil, message: "Disconnecting from \(device.name)...")
             deviceConnection.disconnect()
         } else {
-            presentAlert(title: nil, message: "Connecting to \(device.name)...")
+            presentAlert(title: nil, message: "Connecting to \(device.name)...", actions: [
+                AlertAction(title: "Cancel", handler: {
+                    BLEConnectionManager.shared.cancelConnect()
+                })
+            ])
             deviceConnection.connect()
         }
     }
