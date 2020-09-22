@@ -111,7 +111,8 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.messages = messages
         
         paymentResultLabel.isHidden = true
-        UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
+            var paymentService : PaymentService?
+            paymentService = UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
             LogManager.debug(message: "Payment did progress: \(state.name)")
             
             var message = ""
@@ -147,12 +148,16 @@ class PaymentViewController: AlertPresenterTableViewController {
             default:
                 break
             }
-            self.presentAlert(title: nil, message: message)
+             
+            DispatchQueue.main.async {
+                self.presentAlert(title: nil, message: message, actions: [
+                    AlertAction.init(title: "Cancel", handler: {
+                        paymentService?.cancelTransaction()
+                    })
+                ])
+            }
+            
         }, didFinish: { (success: Bool, context: PaymentContext) in
-            self.dismissAlert()
-            LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
-            self.paymentResultLabel.text = (context.paymentStatus?.name ?? "unknown")
-            self.paymentResultLabel.isHidden = false
             
             if let uCubeFirmware = context.uCubeInfo?.parseTLV()[RPC.Tag.firmwareVersion] {
                 LogManager.debug(message: "uCube firmware version: \(uCubeFirmware.parseVersion())")
