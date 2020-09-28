@@ -1,10 +1,10 @@
 PODS:
-  - UCube (0.4.0):
+  - UCube (0.4.1):
     - Zip (~> 1.1)
   - Zip (1.1.0)
 
 DEPENDENCIES:
-  - "UCube (from `git@github.com:YouTransactor/mPOS-SDK-IOS-Framework.git`, tag `v0.4.0`)"
+  - UCube (from `../mPOS-SDK-IOS-Source-Code`)
 
 SPEC REPOS:
   trunk:
@@ -12,18 +12,12 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   UCube:
-    :git: "git@github.com:YouTransactor/mPOS-SDK-IOS-Framework.git"
-    :tag: v0.4.0
-
-CHECKOUT OPTIONS:
-  UCube:
-    :git: "git@github.com:YouTransactor/mPOS-SDK-IOS-Framework.git"
-    :tag: v0.4.0
+    :path: "../mPOS-SDK-IOS-Source-Code"
 
 SPEC CHECKSUMS:
-  UCube: c5932168cedf554534ebd2a3cf28adacf95e1db8
+  UCube: 973f0206fc919d0fdd455e24d80996ec135342d5
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: 2615ecd601307338f4743a71a17bb65c473a6e0d
+PODFILE CHECKSUM: e50acd7baf6a6f7e0a82de0d264808341c51075c
 
 COCOAPODS: 1.9.3

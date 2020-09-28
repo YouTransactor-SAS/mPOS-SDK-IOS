@@ -42,7 +42,8 @@ class AuthorizationTask: AuthorizationTasking {
                LogManager.debug(message: "Plain tag: 0x\(tag.hexString), \(tag) = 0x\(value.hexString)")
            }
         }
-        if let securedTagBlock = self.paymentContext?.finalizationSecuredTagsValues {
+        
+        if let securedTagBlock = self.paymentContext?.authorizationSecuredTagsValues {
            LogManager.debug(message: "secured tag block: \(securedTagBlock.hexString)")
         }
 

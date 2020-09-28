@@ -73,10 +73,59 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.preferredLanguages = ["en"]
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
-        paymentRequest.authorizationPlainTags = [RPC.Tag.tvr, RPC.Tag.tsi]
-        paymentRequest.authorizationSecuredTags = [RPC.Tag.track2EquData]
-        paymentRequest.finalizationPlainTags = [RPC.Tag.emvCvmResult]
-        paymentRequest.finalizationSecuredTags = [RPC.Tag.track2EquData]
+        paymentRequest.authorizationPlainTags = [
+            RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
+            RPC.EMVTag.TAG_50_APPLICATION_LABEL,
+            RPC.EMVTag.TAG_5F2A_TRANSACTION_CURRENCY_CODE,
+            RPC.EMVTag.TAG_5F34_APPLICATION_PRIMARY_ACCOUNT_NUMBER_SEQUENCE_NUMBER,
+            RPC.EMVTag.TAG_81_AMOUNT_AUTHORISED,
+            RPC.EMVTag.TAG_8E_CARDHOLDER_VERIFICATION_METHOD_LIST,
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_9B_TRANSACTION_STATUS_INFORMATION,
+            RPC.EMVTag.TAG_99_TRANSACTION_PERSONAL_IDENTIFICATION_NUMBER_DATA,
+            RPC.EMVTag.TAG_9A_TRANSACTION_DATE,
+            RPC.EMVTag.TAG_9F1A_TERMINAL_COUNTRY_CODE,
+            RPC.EMVTag.TAG_DF37_SELECTED_CARDHOLDER_LANGUAGE
+        ]
+        
+        paymentRequest.authorizationSecuredTags = [
+            RPC.EMVTag.TAG_SECURE_5A_APPLICATION_PRIMARY_ACCOUNT_NUMBER,
+            RPC.EMVTag.TAG_SECURE_57_TRACK_2_EQUIVALENT_DATA,
+            RPC.EMVTag.TAG_SECURE_56_TRACK_1_DATA,
+            RPC.EMVTag.TAG_SECURE_5F20_CARDHOLDER_NAME,
+            RPC.EMVTag.TAG_SECURE_5F24_APPLICATION_EXPIRATION_DATE,
+            RPC.EMVTag.TAG_SECURE_5F30_SERVICE_CODE,
+            RPC.EMVTag.TAG_SECURE_9F0B_CARDHOLDER_NAME_EXTENDED,
+            RPC.EMVTag.TAG_SECURE_9F6B_TRACK_2_DATA
+        ]
+        
+        paymentRequest.finalizationPlainTags = [
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
+            RPC.EMVTag.TAG_50_APPLICATION_LABEL,
+            RPC.EMVTag.TAG_5F2A_TRANSACTION_CURRENCY_CODE,
+            RPC.EMVTag.TAG_5F34_APPLICATION_PRIMARY_ACCOUNT_NUMBER_SEQUENCE_NUMBER,
+            RPC.EMVTag.TAG_81_AMOUNT_AUTHORISED,
+            RPC.EMVTag.TAG_8E_CARDHOLDER_VERIFICATION_METHOD_LIST,
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_9B_TRANSACTION_STATUS_INFORMATION,
+            RPC.EMVTag.TAG_99_TRANSACTION_PERSONAL_IDENTIFICATION_NUMBER_DATA,
+            RPC.EMVTag.TAG_9A_TRANSACTION_DATE,
+            RPC.EMVTag.TAG_9F1A_TERMINAL_COUNTRY_CODE,
+            RPC.EMVTag.TAG_DF37_SELECTED_CARDHOLDER_LANGUAGE,
+        ]
+        
+        paymentRequest.finalizationSecuredTags = [
+            RPC.EMVTag.TAG_SECURE_5A_APPLICATION_PRIMARY_ACCOUNT_NUMBER,
+            RPC.EMVTag.TAG_SECURE_57_TRACK_2_EQUIVALENT_DATA,
+            RPC.EMVTag.TAG_SECURE_56_TRACK_1_DATA,
+            RPC.EMVTag.TAG_SECURE_5F20_CARDHOLDER_NAME,
+            RPC.EMVTag.TAG_SECURE_5F24_APPLICATION_EXPIRATION_DATE,
+            RPC.EMVTag.TAG_SECURE_5F30_SERVICE_CODE,
+            RPC.EMVTag.TAG_SECURE_9F0B_CARDHOLDER_NAME_EXTENDED,
+            RPC.EMVTag.TAG_SECURE_9F6B_TRACK_2_DATA
+        ]
+        
         if (!contactOnlySwitch.isOn) {
             paymentRequest.readers.append(.nfc)
         }
@@ -103,7 +152,7 @@ class PaymentViewController: AlertPresenterTableViewController {
                  "LBL_configuration_error": "Config Error",
                  "LBL_wait_card": "%@ %@\nInsert card",
                  "LBL_wait_cancel": "Cancellation \n Please wait",
-                 "GLOBAL_LBL_xposition": "FF",
+                 "GLOBAL_LBL_xcentered": "00",
                  "GLOBAL_LBL_yposition": "0C",
                  "GLOBAL_LBL_font_id": "00",
          ]
@@ -148,17 +197,13 @@ class PaymentViewController: AlertPresenterTableViewController {
             default:
                 break
             }
-             
-            DispatchQueue.main.async {
-                self.presentAlert(title: nil, message: message, actions: [
-                    AlertAction.init(title: "Cancel", handler: {
-                        paymentService?.cancelTransaction()
-                    })
-                ])
-            }
-            
-        }, didFinish: { (success: Bool, context: PaymentContext) in
-            
+            self.presentAlert(title: nil, message: message)
+        }
+            , didFinish: { (success: Bool, context: PaymentContext) in
+                self.dismissAlert()
+                LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
+                self.paymentResultLabel.text = (context.paymentStatus?.name ?? "unknown")
+                self.paymentResultLabel.isHidden = false
             if let uCubeFirmware = context.uCubeInfo?.parseTLV()[RPC.Tag.firmwareVersion] {
                 LogManager.debug(message: "uCube firmware version: \(uCubeFirmware.parseVersion())")
             }
