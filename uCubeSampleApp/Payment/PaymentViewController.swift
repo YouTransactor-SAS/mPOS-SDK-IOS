@@ -133,29 +133,29 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
         paymentRequest.authorizationTask = AuthorizationTask(presenter: self)
         
-         let messages = [
-                 "LBL_wait_context_reset": "Please wait",
-                 "LBL_wait_transaction_finalization": "Please wait",
-                 "LBL_wait_online_pin_process": "Please wait",
-                 "LBL_wait_open_new_secure_session": "Please wait",
-                 "LBL_wait_payment_service_initialization": "Please wait",
-                 "LBL_authorization": "Authorization processing",
-                 "LBL_remove_card": "Remove card",
-                 "LBL_approved": "Approved",
-                 "LBL_declined": "Declined",
-                 "LBL_use_chip": "Use chip",
-                 "LBL_no_card_detected": "No card detected",
-                 "LBL_unsupported_card": "Unsupported card",
-                 "LBL_refused_card": "Card refused",
-                 "LBL_cancelled": "Cancelled",
-                 "LBL_try_other_interface": "Try other interface",
-                 "LBL_configuration_error": "Config Error",
-                 "LBL_wait_card": "%@ %d\nInsert card",
-                 "LBL_wait_cancel": "Cancellation \n Please wait",
-                 "GLOBAL_LBL_xcentered": "00",
-                 "GLOBAL_LBL_yposition": "0C",
-                 "GLOBAL_LBL_font_id": "00",
-         ]
+        let messages:[PaymentMessages:String] = [
+             PaymentMessages.LBL_wait_context_reset: "Please wait",
+             PaymentMessages.LBL_wait_transaction_finalization: "Please wait",
+             PaymentMessages.LBL_wait_online_pin_process: "Please wait",
+             PaymentMessages.LBL_wait_open_new_secure_session: "Please wait",
+             PaymentMessages.LBL_wait_payment_service_initialization: "Please wait",
+             PaymentMessages.LBL_authorization: "Authorization processing",
+             PaymentMessages.LBL_remove_card: "Remove card",
+             PaymentMessages.LBL_approved: "Approved",
+             PaymentMessages.LBL_declined: "Declined",
+             PaymentMessages.LBL_use_chip: "Use chip",
+             PaymentMessages.LBL_no_card_detected: "No card detected",
+             PaymentMessages.LBL_unsupported_card: "Unsupported card",
+             PaymentMessages.LBL_refused_card: "Card refused",
+             PaymentMessages.LBL_cancelled: "Cancelled",
+             PaymentMessages.LBL_try_other_interface: "Try other interface",
+             PaymentMessages.LBL_configuration_error: "Config Error",
+             PaymentMessages.LBL_wait_card: "%@ %d\nInsert card",
+             PaymentMessages.LBL_wait_cancel: "Cancellation \n Please wait",
+             PaymentMessages.GLOBAL_LBL_xposition: "00",
+             PaymentMessages.GLOBAL_LBL_yposition: "0C",
+             PaymentMessages.GLOBAL_LBL_font_id: "00",
+        ]
 
         paymentRequest.messages = messages
         
