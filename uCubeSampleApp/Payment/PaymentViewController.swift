@@ -54,7 +54,7 @@ class PaymentViewController: AlertPresenterTableViewController {
             let cardWaitTimeoutText = cardWaitTimeoutTextField.text,
             let cardWaitTimeout = Int(cardWaitTimeoutText),
             let amountText = amountTextField.text,
-            let amount = Double(amountText.replacingOccurrences(of: ",", with: "."))
+            let amount = UInt64(amountText.replacingOccurrences(of: ".", with: ""))
             else {
                 return
         }
@@ -65,7 +65,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.systemFailureInfo = true
         paymentRequest.systemFailureInfo2 = true
         if !enterAmountOnCubeSwitch.isOn {
-            paymentRequest.amount = amount
+            paymentRequest.amount = UInt64(amount)
         }
         paymentRequest.currency = currency
         paymentRequest.transactionType = transactionType
@@ -150,7 +150,7 @@ class PaymentViewController: AlertPresenterTableViewController {
                  "LBL_cancelled": "Cancelled",
                  "LBL_try_other_interface": "Try other interface",
                  "LBL_configuration_error": "Config Error",
-                 "LBL_wait_card": "%@ %@\nInsert card",
+                 "LBL_wait_card": "%@ %d\nInsert card",
                  "LBL_wait_cancel": "Cancellation \n Please wait",
                  "GLOBAL_LBL_xcentered": "00",
                  "GLOBAL_LBL_yposition": "0C",
