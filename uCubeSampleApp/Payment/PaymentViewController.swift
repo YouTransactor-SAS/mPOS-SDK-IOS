@@ -127,7 +127,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         ]
         
         if (!contactOnlySwitch.isOn) {
-            paymentRequest.readers.append(.nfc)
+            paymentRequest.readers.append(.NFC)
         }
         
         paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
@@ -207,8 +207,14 @@ class PaymentViewController: AlertPresenterTableViewController {
             if let uCubeFirmware = context.uCubeInfo?.parseTLV()[RPC.Tag.firmwareVersion] {
                 LogManager.debug(message: "uCube firmware version: \(uCubeFirmware.parseVersion())")
             }
-            if let activatedReader = context.activatedReader {
-                LogManager.debug(message: "Used interface: \(CardReaderType.getLabel(code: activatedReader) ?? "unknown")")
+                if let cardEntryMode = context.cardEntryMode {
+                    switch cardEntryMode {
+                        case CardEntryMode.ICC :
+                            LogManager.debug(message: "Used interface was smart card")
+                        case CardEntryMode.NFC :
+                            LogManager.debug(message: "Used interface was NFC")
+                    }
+                    
             }
             LogManager.debug(message: "amount: \(context.getAmount())")
             LogManager.debug(message: "currency: \(context.currency?.label ?? "unknown")")
