@@ -65,6 +65,10 @@ class AuthorizationTask: AuthorizationTasking {
         ])
     }
     
+    public func cancel() {
+        monitor?.eventHandler(.cancelled, [])
+    }
+    
     private func end(choice: Int) {
         switch choice {
         case 0:

@@ -45,6 +45,10 @@ class RiskManagementTask: RiskManagementTasking {
         ])
     }
     
+    public func cancel() {
+        monitor?.eventHandler(.cancelled, [])
+    }
+    
     private func end(tvr: Data) {
         self.tvr = tvr
         
