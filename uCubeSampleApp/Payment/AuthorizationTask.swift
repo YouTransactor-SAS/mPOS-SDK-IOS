@@ -12,7 +12,7 @@ import UIKit
 class AuthorizationTask: AuthorizationTasking {
     
     private let presenter: AlertPresenter
-    private var authorizationResponse = Data([0x8A, 0x02, 0x30, 0x30]) // Approved
+    private var authorizationResponse : Data?
     private var monitor: TaskMonitoring?
     private var paymentContext: PaymentContext?
     
@@ -20,7 +20,7 @@ class AuthorizationTask: AuthorizationTasking {
         self.presenter = presenter
     }
     
-    func getAuthorizationResponse() -> Data {
+    func getAuthorizationResponse() -> Data? {
         return authorizationResponse
     }
     
@@ -35,6 +35,11 @@ class AuthorizationTask: AuthorizationTasking {
     func execute(monitor: TaskMonitoring) {
         self.monitor = monitor
         
+        if(self.paymentContext?.authorizationPlainTagsValues == nil){
+            monitor.eventHandler(.failed, [])
+            return
+        }
+            
         //TODO: send these tags to the server
         //TODO: call server to do the authorization
         if let plainTagTLV = self.paymentContext?.authorizationPlainTagsValues {
@@ -42,7 +47,8 @@ class AuthorizationTask: AuthorizationTasking {
                LogManager.debug(message: "Plain tag: 0x\(tag.hexString), \(tag) = 0x\(value.hexString)")
            }
         }
-        if let securedTagBlock = self.paymentContext?.finalizationSecuredTagsValues {
+        
+        if let securedTagBlock = self.paymentContext?.authorizationSecuredTagsValues {
            LogManager.debug(message: "secured tag block: \(securedTagBlock.hexString)")
         }
 

@@ -54,7 +54,7 @@ class PaymentViewController: AlertPresenterTableViewController {
             let cardWaitTimeoutText = cardWaitTimeoutTextField.text,
             let cardWaitTimeout = Int(cardWaitTimeoutText),
             let amountText = amountTextField.text,
-            let amount = Double(amountText.replacingOccurrences(of: ",", with: "."))
+            let amount = UInt64(amountText.replacingOccurrences(of: ".", with: ""))
             else {
                 return
         }
@@ -65,7 +65,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.systemFailureInfo = true
         paymentRequest.systemFailureInfo2 = true
         if !enterAmountOnCubeSwitch.isOn {
-            paymentRequest.amount = amount
+            paymentRequest.amount = UInt64(amount)
         }
         paymentRequest.currency = currency
         paymentRequest.transactionType = transactionType
@@ -73,45 +73,95 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.preferredLanguages = ["en"]
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
-        paymentRequest.authorizationPlainTags = [RPC.Tag.tvr, RPC.Tag.tsi]
-        paymentRequest.authorizationSecuredTags = [RPC.Tag.track2EquData]
-        paymentRequest.finalizationPlainTags = [RPC.Tag.emvCvmResult]
-        paymentRequest.finalizationSecuredTags = [RPC.Tag.track2EquData]
+        paymentRequest.authorizationPlainTags = [
+            RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
+            RPC.EMVTag.TAG_50_APPLICATION_LABEL,
+            RPC.EMVTag.TAG_5F2A_TRANSACTION_CURRENCY_CODE,
+            RPC.EMVTag.TAG_5F34_APPLICATION_PRIMARY_ACCOUNT_NUMBER_SEQUENCE_NUMBER,
+            RPC.EMVTag.TAG_81_AMOUNT_AUTHORISED,
+            RPC.EMVTag.TAG_8E_CARDHOLDER_VERIFICATION_METHOD_LIST,
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_9B_TRANSACTION_STATUS_INFORMATION,
+            RPC.EMVTag.TAG_99_TRANSACTION_PERSONAL_IDENTIFICATION_NUMBER_DATA,
+            RPC.EMVTag.TAG_9A_TRANSACTION_DATE,
+            RPC.EMVTag.TAG_9F1A_TERMINAL_COUNTRY_CODE,
+            RPC.EMVTag.TAG_DF37_SELECTED_CARDHOLDER_LANGUAGE
+        ]
+        
+        paymentRequest.authorizationSecuredTags = [
+            RPC.EMVTag.TAG_SECURE_5A_APPLICATION_PRIMARY_ACCOUNT_NUMBER,
+            RPC.EMVTag.TAG_SECURE_57_TRACK_2_EQUIVALENT_DATA,
+            RPC.EMVTag.TAG_SECURE_56_TRACK_1_DATA,
+            RPC.EMVTag.TAG_SECURE_5F20_CARDHOLDER_NAME,
+            RPC.EMVTag.TAG_SECURE_5F24_APPLICATION_EXPIRATION_DATE,
+            RPC.EMVTag.TAG_SECURE_5F30_SERVICE_CODE,
+            RPC.EMVTag.TAG_SECURE_9F0B_CARDHOLDER_NAME_EXTENDED,
+            RPC.EMVTag.TAG_SECURE_9F6B_TRACK_2_DATA
+        ]
+        
+        paymentRequest.finalizationPlainTags = [
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
+            RPC.EMVTag.TAG_50_APPLICATION_LABEL,
+            RPC.EMVTag.TAG_5F2A_TRANSACTION_CURRENCY_CODE,
+            RPC.EMVTag.TAG_5F34_APPLICATION_PRIMARY_ACCOUNT_NUMBER_SEQUENCE_NUMBER,
+            RPC.EMVTag.TAG_81_AMOUNT_AUTHORISED,
+            RPC.EMVTag.TAG_8E_CARDHOLDER_VERIFICATION_METHOD_LIST,
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_9B_TRANSACTION_STATUS_INFORMATION,
+            RPC.EMVTag.TAG_99_TRANSACTION_PERSONAL_IDENTIFICATION_NUMBER_DATA,
+            RPC.EMVTag.TAG_9A_TRANSACTION_DATE,
+            RPC.EMVTag.TAG_9F1A_TERMINAL_COUNTRY_CODE,
+            RPC.EMVTag.TAG_DF37_SELECTED_CARDHOLDER_LANGUAGE,
+        ]
+        
+        paymentRequest.finalizationSecuredTags = [
+            RPC.EMVTag.TAG_SECURE_5A_APPLICATION_PRIMARY_ACCOUNT_NUMBER,
+            RPC.EMVTag.TAG_SECURE_57_TRACK_2_EQUIVALENT_DATA,
+            RPC.EMVTag.TAG_SECURE_56_TRACK_1_DATA,
+            RPC.EMVTag.TAG_SECURE_5F20_CARDHOLDER_NAME,
+            RPC.EMVTag.TAG_SECURE_5F24_APPLICATION_EXPIRATION_DATE,
+            RPC.EMVTag.TAG_SECURE_5F30_SERVICE_CODE,
+            RPC.EMVTag.TAG_SECURE_9F0B_CARDHOLDER_NAME_EXTENDED,
+            RPC.EMVTag.TAG_SECURE_9F6B_TRACK_2_DATA
+        ]
+        
         if (!contactOnlySwitch.isOn) {
-            paymentRequest.readers.append(.nfc)
+            paymentRequest.readers.append(.NFC)
         }
         
         paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
         paymentRequest.authorizationTask = AuthorizationTask(presenter: self)
         
-         let messages = [
-                 "LBL_wait_context_reset": "Please wait",
-                 "LBL_wait_transaction_finalization": "Please wait",
-                 "LBL_wait_online_pin_process": "Please wait",
-                 "LBL_wait_open_new_secure_session": "Please wait",
-                 "LBL_wait_payment_service_initialization": "Please wait",
-                 "LBL_authorization": "Authorization processing",
-                 "LBL_remove_card": "Remove card",
-                 "LBL_approved": "Approved",
-                 "LBL_declined": "Declined",
-                 "LBL_use_chip": "Use chip",
-                 "LBL_no_card_detected": "No card detected",
-                 "LBL_unsupported_card": "Unsupported card",
-                 "LBL_refused_card": "Card refused",
-                 "LBL_cancelled": "Cancelled",
-                 "LBL_try_other_interface": "Try other interface",
-                 "LBL_configuration_error": "Config Error",
-                 "LBL_wait_card": "%@ %@\nInsert card",
-                 "LBL_wait_cancel": "Cancellation \n Please wait",
-                 "GLOBAL_LBL_xposition": "FF",
-                 "GLOBAL_LBL_yposition": "0C",
-                 "GLOBAL_LBL_font_id": "00",
-         ]
+        let messages:[PaymentMessages:String] = [
+             PaymentMessages.LBL_wait_context_reset: "Please wait",
+             PaymentMessages.LBL_wait_transaction_finalization: "Please wait",
+             PaymentMessages.LBL_wait_online_pin_process: "Please wait",
+             PaymentMessages.LBL_wait_open_new_secure_session: "Please wait",
+             PaymentMessages.LBL_wait_payment_service_initialization: "Please wait",
+             PaymentMessages.LBL_authorization: "Authorization processing",
+             PaymentMessages.LBL_remove_card: "Remove card",
+             PaymentMessages.LBL_approved: "Approved",
+             PaymentMessages.LBL_declined: "Declined",
+             PaymentMessages.LBL_use_chip: "Use chip",
+             PaymentMessages.LBL_no_card_detected: "No card detected",
+             PaymentMessages.LBL_unsupported_card: "Unsupported card",
+             PaymentMessages.LBL_refused_card: "Card refused",
+             PaymentMessages.LBL_cancelled: "Cancelled",
+             PaymentMessages.LBL_try_other_interface: "Try other interface",
+             PaymentMessages.LBL_configuration_error: "Config Error",
+             PaymentMessages.LBL_wait_card: "%@ %d\nInsert card",
+             PaymentMessages.LBL_wait_cancel: "Cancellation \n Please wait",
+             PaymentMessages.GLOBAL_LBL_xposition: "00",
+             PaymentMessages.GLOBAL_LBL_yposition: "0C",
+             PaymentMessages.GLOBAL_LBL_font_id: "00",
+        ]
 
         paymentRequest.messages = messages
         
         paymentResultLabel.isHidden = true
-        UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
+            var paymentService : PaymentService?
+            paymentService = UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
             LogManager.debug(message: "Payment did progress: \(state.name)")
             
             var message = ""
@@ -148,17 +198,23 @@ class PaymentViewController: AlertPresenterTableViewController {
                 break
             }
             self.presentAlert(title: nil, message: message)
-        }, didFinish: { (success: Bool, context: PaymentContext) in
-            self.dismissAlert()
-            LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
-            self.paymentResultLabel.text = (context.paymentStatus?.name ?? "unknown")
-            self.paymentResultLabel.isHidden = false
-            
+        }
+            , didFinish: { (success: Bool, context: PaymentContext) in
+                self.dismissAlert()
+                LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
+                self.paymentResultLabel.text = (context.paymentStatus?.name ?? "unknown")
+                self.paymentResultLabel.isHidden = false
             if let uCubeFirmware = context.uCubeInfo?.parseTLV()[RPC.Tag.firmwareVersion] {
                 LogManager.debug(message: "uCube firmware version: \(uCubeFirmware.parseVersion())")
             }
-            if let activatedReader = context.activatedReader {
-                LogManager.debug(message: "Used interface: \(CardReaderType.getLabel(code: activatedReader) ?? "unknown")")
+                if let cardEntryMode = context.cardEntryMode {
+                    switch cardEntryMode {
+                        case CardEntryMode.ICC :
+                            LogManager.debug(message: "Used interface was smart card")
+                        case CardEntryMode.NFC :
+                            LogManager.debug(message: "Used interface was NFC")
+                    }
+                    
             }
             LogManager.debug(message: "amount: \(context.getAmount())")
             LogManager.debug(message: "currency: \(context.currency?.label ?? "unknown")")
