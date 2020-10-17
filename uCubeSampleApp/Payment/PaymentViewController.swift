@@ -58,7 +58,8 @@ class PaymentViewController: AlertPresenterTableViewController {
     
     @IBAction func cancelPayment(_ sender: Any) {
         cancelButton.isEnabled = false
-        // TODO: Cancel
+        
+        self.emvPaystateMachine?.cancel()
     }
     
     @IBAction func startPayment(_ sender: Any) {
