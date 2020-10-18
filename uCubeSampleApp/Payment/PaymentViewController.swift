@@ -21,9 +21,14 @@ class PaymentViewController: AlertPresenterTableViewController {
     @IBOutlet weak var amountTextField: UITextField!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var paymentResultLabel: UILabel!
+    @IBOutlet weak var paymentStateLabel: UILabel!
+    @IBOutlet weak var startButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
     
     private var transactionType: TransactionType = .purchase
-    private var currency: Currency = UCubePaymentRequest.currencyEUR
+    private var currency: Currency = UCubePaymentRequest.currencyGBP
+    private var emvPaystateMachine : EMVPaymentStateMachine?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +36,8 @@ class PaymentViewController: AlertPresenterTableViewController {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapView)))
         enterAmountOnCubeSwitch.isEnabled = false
         paymentResultLabel.isHidden = true
+        paymentStateLabel.isHidden = true
+        cancelButton.isHidden = true
     }
     
     override func viewDidLayoutSubviews() {
@@ -49,6 +56,12 @@ class PaymentViewController: AlertPresenterTableViewController {
         amountTextField.resignFirstResponder()
     }
     
+    @IBAction func cancelPayment(_ sender: Any) {
+        cancelButton.isEnabled = false
+        
+        self.emvPaystateMachine?.cancel()
+    }
+    
     @IBAction func startPayment(_ sender: Any) {
         guard
             let cardWaitTimeoutText = cardWaitTimeoutTextField.text,
@@ -59,18 +72,55 @@ class PaymentViewController: AlertPresenterTableViewController {
                 return
         }
         
-        var paymentRequest = UCubePaymentRequest()
+        let amountValue = !enterAmountOnCubeSwitch.isOn ? UInt64(amount) : 0
+        var readers = [CardEntryMode.ICC]
+        
+        if (!contactOnlySwitch.isOn) {
+            readers.append(.NFC)
+        }
+        
+        let messages:[PaymentMessages:String] = [
+            
+            PaymentMessages.LBL_prepare_context: "preparing context",
+            PaymentMessages.LBL_authorization: "Authorization processing",
+            PaymentMessages.LBL_smc_initialization: "initialization processing",
+            PaymentMessages.LBL_smc_risk_management: "risque management processing",
+            PaymentMessages.LBL_smc_finalization: "finalization processing",
+            PaymentMessages.LBL_smc_remove_card: "remove card, please",
+            
+            PaymentMessages.LBL_nfc_complete: "complete processing",
+            PaymentMessages.LBL_wait_online_pin_process: "online pin processing",
+            PaymentMessages.LBL_wait_card: "insert card",
+            
+            PaymentMessages.LBL_approved: "Approved",
+            PaymentMessages.LBL_declined: "Declined",
+            PaymentMessages.LBL_unsupported_card: "Unsupported card",
+            PaymentMessages.LBL_cancelled: "Cancelled",
+            PaymentMessages.LBL_error: "Error",
+            PaymentMessages.LBL_no_card_detected: "No card detected",
+            PaymentMessages.LBL_wrong_activated_reader: "wrong activated reader",
+            
+            PaymentMessages.LBL_try_other_interface: "try other interface",
+            PaymentMessages.LBL_end_application: "end application ",
+            PaymentMessages.LBL_failed: "failed",
+            PaymentMessages.LBL_wrong_nfc_outcome: "wrong nfc outcome",
+        
+            PaymentMessages.LBL_wrong_cryptogram_value: "wrong cryptogram value",
+            PaymentMessages.LBL_missing_required_cryptogram: "missing required cryptogram",
+            PaymentMessages.GLOBAL_LBL_xposition: "00",
+            PaymentMessages.GLOBAL_LBL_yposition: "0C",
+            PaymentMessages.GLOBAL_LBL_font_id: "00",
+        ]
+        
+        // non optional variables
+        var paymentRequest = UCubePaymentRequest(amount: amountValue, currency: currency, transactionType: transactionType, readers: readers, messages: messages, authorizationTask: AuthorizationTask(presenter: self), preferredLanguages: ["en"] )
+        
+        // optional variables
         paymentRequest.displayResult = displayResultOnCubeSwitch.isOn
         paymentRequest.cardWaitTimeout = cardWaitTimeout
-        paymentRequest.systemFailureInfo = true
-        paymentRequest.systemFailureInfo2 = true
-        if !enterAmountOnCubeSwitch.isOn {
-            paymentRequest.amount = UInt64(amount)
-        }
-        paymentRequest.currency = currency
-        paymentRequest.transactionType = transactionType
+        paymentRequest.systemFailureInfo = false
+        paymentRequest.systemFailureInfo2 = false
         paymentRequest.transactionDate = Date()
-        paymentRequest.preferredLanguages = ["en"]
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
         paymentRequest.authorizationPlainTags = [
@@ -125,99 +175,42 @@ class PaymentViewController: AlertPresenterTableViewController {
             RPC.EMVTag.TAG_SECURE_9F0B_CARDHOLDER_NAME_EXTENDED,
             RPC.EMVTag.TAG_SECURE_9F6B_TRACK_2_DATA
         ]
-        
-        if (!contactOnlySwitch.isOn) {
-            paymentRequest.readers.append(.NFC)
-        }
-        
+    
         paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
-        paymentRequest.authorizationTask = AuthorizationTask(presenter: self)
-        
-        let messages:[PaymentMessages:String] = [
-             PaymentMessages.LBL_wait_context_reset: "Please wait",
-             PaymentMessages.LBL_wait_transaction_finalization: "Please wait",
-             PaymentMessages.LBL_wait_online_pin_process: "Please wait",
-             PaymentMessages.LBL_wait_open_new_secure_session: "Please wait",
-             PaymentMessages.LBL_wait_payment_service_initialization: "Please wait",
-             PaymentMessages.LBL_authorization: "Authorization processing",
-             PaymentMessages.LBL_remove_card: "Remove card",
-             PaymentMessages.LBL_approved: "Approved",
-             PaymentMessages.LBL_declined: "Declined",
-             PaymentMessages.LBL_use_chip: "Use chip",
-             PaymentMessages.LBL_no_card_detected: "No card detected",
-             PaymentMessages.LBL_unsupported_card: "Unsupported card",
-             PaymentMessages.LBL_refused_card: "Card refused",
-             PaymentMessages.LBL_cancelled: "Cancelled",
-             PaymentMessages.LBL_try_other_interface: "Try other interface",
-             PaymentMessages.LBL_configuration_error: "Config Error",
-             PaymentMessages.LBL_wait_card: "%@ %d\nInsert card",
-             PaymentMessages.LBL_wait_cancel: "Cancellation \n Please wait",
-             PaymentMessages.GLOBAL_LBL_xposition: "00",
-             PaymentMessages.GLOBAL_LBL_yposition: "0C",
-             PaymentMessages.GLOBAL_LBL_font_id: "00",
-        ]
-
-        paymentRequest.messages = messages
+      
         
         paymentResultLabel.isHidden = true
-            var paymentService : PaymentService?
-            paymentService = UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
+        startButton.isHidden = true
+        cancelButton.isHidden = false
+        emvPaystateMachine = UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
             LogManager.debug(message: "Payment did progress: \(state.name)")
+            self.paymentStateLabel.text = state.name
+            self.paymentStateLabel.isHidden = false
+        }, didFinish: { (context: PaymentContext) in
+            LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
             
-            var message = ""
-            switch state {
-            case .cancelAll, .getInfo:
-                message = "Prepare payment..."
-            case .waitCard:
-                message = "Waiting for card insertion..."
-            case .enterSecureSession, .ksnAvailable:
-                message = "Please wait..."
-            case .smcBuildCandidateList, .smcSelectApplication, .smcUserSelectApplication:
-                message = "App selection..."
-            case .smcInitTransaction, .startNFCTransaction:
-                message = "Starting..., please wait"
-            case .smcRiskManagement:
-                message = "Risk management processing..."
-            case .smcProcessTransaction, .smcGetAuthorizationPlainTags, .smcGetAuthorizationSecuredTags, .msrGetPlainTags, .msrGetSecuredTags, .nfcGetAuthorizationSecuredTags, .nfcGetAuthorizationPlainTags:
-                message = "Processing..., please wait"
-            case .smcFinalizeTransaction, .completeNFCTransaction, .nfcGetFinalizationPlainTags, .nfcGetFinalizationSecuredTags:
-                message = "Finalization..., please wait"
-            case .smcRemoveCard:
-                message = "Please remove card"
-            case .msrOnlinePIN:
-                message = "Pin online..."
-            case .authorization:
-                message = "Authorization processing"
-            case .exitSecureSession:
-                message = "Transaction complete"
-            case .displayResult:
-                message = "Displaying result on device"
-            case .getL1Log, .getL2Log:
-                message = "Getting transaction logs..."
-            default:
-                break
-            }
-            self.presentAlert(title: nil, message: message)
-        }
-            , didFinish: { (success: Bool, context: PaymentContext) in
-                self.dismissAlert()
-                LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
-                self.paymentResultLabel.text = (context.paymentStatus?.name ?? "unknown")
-                self.paymentResultLabel.isHidden = false
+            // UI
+            self.paymentResultLabel.text = (context.paymentStatus?.name ?? "unknown")
+            self.paymentResultLabel.isHidden = false
+            self.paymentStateLabel.isHidden = true
+            self.cancelButton.isHidden = true
+            self.cancelButton.isEnabled = true
+            self.startButton.isHidden = false
+            
+            // Log result
             if let uCubeFirmware = context.uCubeInfo?.parseTLV()[RPC.Tag.firmwareVersion] {
                 LogManager.debug(message: "uCube firmware version: \(uCubeFirmware.parseVersion())")
             }
-                if let cardEntryMode = context.cardEntryMode {
-                    switch cardEntryMode {
-                        case CardEntryMode.ICC :
-                            LogManager.debug(message: "Used interface was smart card")
-                        case CardEntryMode.NFC :
-                            LogManager.debug(message: "Used interface was NFC")
-                    }
-                    
+            if let cardEntryMode = context.cardEntryMode {
+                switch cardEntryMode {
+                case CardEntryMode.ICC :
+                    LogManager.debug(message: "Used interface was smart card")
+                case CardEntryMode.NFC :
+                    LogManager.debug(message: "Used interface was NFC")
+                }
             }
             LogManager.debug(message: "amount: \(context.getAmount())")
-            LogManager.debug(message: "currency: \(context.currency?.label ?? "unknown")")
+            LogManager.debug(message: "currency: \(context.currency.label )")
             LogManager.debug(message: "tx date: \(context.transactionDate?.description ?? "unknown")")
             LogManager.debug(message: "tx type: \(context.transactionType?.label ?? "unknown")")
             if let selectedApplication = context.selectedApplication {
@@ -280,13 +273,13 @@ class PaymentViewController: AlertPresenterTableViewController {
     }
     
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }
