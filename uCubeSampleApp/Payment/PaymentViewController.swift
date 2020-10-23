@@ -186,6 +186,89 @@ class PaymentViewController: AlertPresenterTableViewController {
             LogManager.debug(message: "Payment did progress: \(state.name)")
             self.paymentStateLabel.text = state.name
             self.paymentStateLabel.isHidden = false
+            
+            /*switch state {
+            case .startTransaction`:
+                  BLEConnectionManager.shared.disconnect()
+            case .unknown:
+                return "unknown"
+            case .getInfo:
+                return "getInfo"
+            case .enterSecureSession:
+                return "enterSecureSession"
+            case .ksnAvailable:
+                return "ksnAvailable"
+            case .smcBuildCandidateList:
+                return "smcBuildCandidateList"
+            case .smcSelectApplication:
+                return "smcSelectApplication"
+            case .smcUserSelectApplication:
+                return "smcUserSelectApplication"
+            case .smcInitTransaction:
+                return "smcInitTransaction"
+            case .smcRiskManagement:
+                return "smcRiskManagement"
+            case .smcProcessTransaction:
+                return "smcProcessTransaction"
+            case .smcGetAuthorizationSecuredTags:
+                return "smcGetAuthorizationSecuredTags"
+            case .smcGetAuthorizationPlainTags:
+                return "smcGetAuthorizationPlainTags"
+            case .smcFinalizeTransaction:
+                return "smcFinalizeTransaction"
+            case .smcRemoveCard:
+                return "smcRemoveCard"
+            case .nfcGetAuthorizationSecuredTags:
+                return "nfcGetAuthorizationSecuredTags"
+            case .nfcGetAuthorizationPlainTags:
+                return "nfcGetAuthorizationPlainTags"
+            case .nfcGetFinalizationSecuredTags:
+                return "nfcGetFinalizationSecuredTags"
+            case .nfcGetFinalizationPlainTags:
+                return "nfcGetFinalizationPlainTags"
+            case.nfcSimplifiedOnlinePin:
+                return "nfcSimplifiedOnlinePin"
+            case .authorization:
+                return "authorization"
+            case .displayResult:
+                return "displayResult"
+            case .getL1Log:
+                return "getL1Log"
+            case .getL2Log:
+                return "getL2Log"
+            case .smcGetFinalizationSecuredTags:
+                return "smcGetFinalizationSecuredTags"
+            case .smcGetFinalizationPlainTags:
+                return "smcGetFinalizationPlainTags"
+            case .startExitSecureSession:
+                return "startExitSecureSession"
+            case .displayWaitPrepareTransaction:
+                return "displayWaitPrepareTransaction"
+            case .startTransaction:
+                return "startTransaction"
+            case .endExitSecureSession:
+                return "endExitSecureSession"
+            case .smcDisplayWaitInitTransaction:
+                return "smcDisplayWaitInitTransaction"
+            case .smcDisplayWaitRiskManagementProcessing:
+                return "smcDisplayWaitRiskManagementProcessing"
+            case .smcDisplayAuthorization:
+                return "smcDisplayAuthorization"
+            case .smcDisplayTransactionFinalization:
+                return "smcDisplayTransactionFinalization"
+            case .smcDisplayRemoveCard:
+                return "smcDisplayRemoveCard"
+            case .nfcDisplayAuthorization:
+                return "nfcDisplayAuthorization"
+            case .nfcDisplayCompleteTransaction:
+                return "nfcDisplayCompleteTransaction"
+            case .nfcCompleteTransaction:
+                return "nfcCompleteTransaction"
+    
+            default:
+                break
+            }*/
+            
         }, didFinish: { (context: PaymentContext) in
             LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
             
