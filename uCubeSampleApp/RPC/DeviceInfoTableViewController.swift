@@ -52,7 +52,10 @@ class DeviceInfoTableViewController: UITableViewController {
         let command = GetInfoCommand(tags: uInt8Tags)
         command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
             switch event {
-            case .failed:
+            case .failed, .cancelled:
+                self.deviceInfo = DeviceInfo(tlv: Data())
+                self.tableView.tableHeaderView = nil
+                self.tableView.reloadData()
                 break
             case .success:
                 self.deviceInfo = DeviceInfo(tlv: (parameters[0] as! GetInfoCommand).getResponseData() ?? Data())
