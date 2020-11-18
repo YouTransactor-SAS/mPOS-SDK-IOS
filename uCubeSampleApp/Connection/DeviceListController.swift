@@ -73,11 +73,6 @@ extension DeviceListController: ScanDelegate {
         stopScan()
         stopActivityAnimation()
     }
-    
-    func scanDidFail() {
-        LogManager.debug(message: "Scan did fail")
-        stopActivityAnimation()
-    }
 }
 
 extension DeviceListController: UITableViewDelegate, UITableViewDataSource {
