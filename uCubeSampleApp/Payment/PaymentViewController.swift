@@ -65,7 +65,7 @@ class PaymentViewController: AlertPresenterTableViewController {
     @IBAction func startPayment(_ sender: Any) {
         guard
             let cardWaitTimeoutText = cardWaitTimeoutTextField.text,
-            let cardWaitTimeout = Int(cardWaitTimeoutText),
+            let cardWaitTimeout = TimeInterval(cardWaitTimeoutText),
             let amountText = amountTextField.text,
             let amount = UInt64(amountText.replacingOccurrences(of: ".", with: ""))
             else {
