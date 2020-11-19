@@ -118,7 +118,6 @@ class PaymentViewController: AlertPresenterTableViewController {
         // optional variables
         paymentRequest.displayResult = displayResultOnCubeSwitch.isOn
         paymentRequest.cardWaitTimeout = cardWaitTimeout
-        paymentRequest.systemFailureInfo = false
         paymentRequest.systemFailureInfo2 = false
         paymentRequest.transactionDate = Date()
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
@@ -217,8 +216,7 @@ class PaymentViewController: AlertPresenterTableViewController {
                 LogManager.debug(message: "app ID: \(selectedApplication.getLabel() ?? "unknown")")
                 LogManager.debug(message: "app version: \(context.applicationVersion?.description ?? "unknown")")
             }
-            LogManager.debug(message: "system failure log1: \(context.systemFailureInfo?.hexString ?? "unknown")")
-            LogManager.debug(message: "system failure log2: \(context.systemFailureInfo2?.hexString ?? "unknown")")
+            LogManager.debug(message: "svpp logs Level 2: \(context.systemFailureInfo2?.hexString ?? "unknown")")
             if let plainTagTLV = context.finalizationPlainTagsValues {
                 for (tag, value) in plainTagTLV {
                     LogManager.debug(message: "Plain tag: 0x\(tag.hexString), \(tag) = 0x\(value.hexString)")
