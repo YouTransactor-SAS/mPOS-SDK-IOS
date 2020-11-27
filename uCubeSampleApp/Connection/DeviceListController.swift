@@ -73,6 +73,12 @@ extension DeviceListController: ScanDelegate {
         stopScan()
         stopActivityAnimation()
     }
+    
+    func scanDidFail(with error: UCubeBluetoothError) {
+        LogManager.debug(message: "Scan did fail with error \(error)")
+        stopScan()
+        stopActivityAnimation()
+    }
 }
 
 extension DeviceListController: UITableViewDelegate, UITableViewDataSource {
