@@ -119,6 +119,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.displayResult = displayResultOnCubeSwitch.isOn
         paymentRequest.cardWaitTimeout = cardWaitTimeout
         paymentRequest.systemFailureInfo2 = false
+        paymentRequest.forceDebug = true
         paymentRequest.transactionDate = Date()
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
@@ -162,6 +163,8 @@ class PaymentViewController: AlertPresenterTableViewController {
             RPC.EMVTag.TAG_9A_TRANSACTION_DATE,
             RPC.EMVTag.TAG_9F1A_TERMINAL_COUNTRY_CODE,
             RPC.EMVTag.TAG_DF37_SELECTED_CARDHOLDER_LANGUAGE,
+            0xDFC302,
+            0xDF8129
         ]
         
         paymentRequest.finalizationSecuredTags = [
