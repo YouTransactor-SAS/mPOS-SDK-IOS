@@ -40,13 +40,8 @@ class DeviceConnection: ConnectionDelegate {
         disconnectCompletion?()
     }
     
-    func deviceDidFailToConnect(_ device: UCubeDevice, error: ConnectionError) {
+    func deviceDidFailToConnect(_ device: UCubeDevice?, error: ConnectionError) {
         LogManager.debug(message: "Device did fail to connect: \(error.description)")
-        disconnectCompletion?()
-    }
-    
-    func deviceDidFailToConnect(with error: UCubeBluetoothError) {
-        LogManager.debug(message: "Device did fail to connect: \(error.name)")
         disconnectCompletion?()
     }
 }

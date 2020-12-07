@@ -26,6 +26,7 @@
 		29E1476B24C1A05E004F51EC /* DeviceInfoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E1476A24C1A05E004F51EC /* DeviceInfoTableViewController.swift */; };
 		29E1479724C9BD95004F51EC /* RiskManagementTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E1479624C9BD95004F51EC /* RiskManagementTask.swift */; };
 		29E1479924C9BDB8004F51EC /* AuthorizationTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E1479824C9BDB8004F51EC /* AuthorizationTask.swift */; };
+		501041B9257E38ED00D20A85 /* UseCardHolderLanguageTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501041B8257E38EC00D20A85 /* UseCardHolderLanguageTask.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		29E1476A24C1A05E004F51EC /* DeviceInfoTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoTableViewController.swift; sourceTree = "<group>"; };
 		29E1479624C9BD95004F51EC /* RiskManagementTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskManagementTask.swift; sourceTree = "<group>"; };
 		29E1479824C9BDB8004F51EC /* AuthorizationTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationTask.swift; sourceTree = "<group>"; };
+		501041B8257E38EC00D20A85 /* UseCardHolderLanguageTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCardHolderLanguageTask.swift; sourceTree = "<group>"; };
 		6084045D2BF22D4FADA2308F /* Pods-uCubeSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-uCubeSampleApp.release.xcconfig"; path = "Target Support Files/Pods-uCubeSampleApp/Pods-uCubeSampleApp.release.xcconfig"; sourceTree = "<group>"; };
 		ABE1B64797EE9EBB882873D9 /* Pods_uCubeSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_uCubeSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1ADB74A894A57B63B0105C4 /* Pods-uCubeSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-uCubeSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-uCubeSampleApp/Pods-uCubeSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				29E1479624C9BD95004F51EC /* RiskManagementTask.swift */,
 				29E1479824C9BDB8004F51EC /* AuthorizationTask.swift */,
 				290072D324D1959600378C62 /* PaymentViewController.swift */,
+				501041B8257E38EC00D20A85 /* UseCardHolderLanguageTask.swift */,
 			);
 			path = Payment;
 			sourceTree = "<group>";
@@ -299,6 +302,7 @@
 				29CB965F24B8CE90001E0578 /* MenuTableViewController.swift in Sources */,
 				2941299524D2C9B300796C37 /* ConfigTableViewController.swift in Sources */,
 				29E1476B24C1A05E004F51EC /* DeviceInfoTableViewController.swift in Sources */,
+				501041B9257E38ED00D20A85 /* UseCardHolderLanguageTask.swift in Sources */,
 				297618D424910CF90015AB51 /* DeviceTableViewCell.swift in Sources */,
 				299CFD1F24DAFC4F005E58B2 /* AlertPresenterViewController.swift in Sources */,
 				29C666D524BF5D9700A9826C /* DisplayMessage.swift in Sources */,
@@ -468,7 +472,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.toto.uCubeSampleApp;
 				PRODUCT_NAME = uCubeSampleApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -496,7 +500,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.toto.uCubeSampleApp;
 				PRODUCT_NAME = uCubeSampleApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
