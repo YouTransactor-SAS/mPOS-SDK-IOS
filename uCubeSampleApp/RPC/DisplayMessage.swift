@@ -22,6 +22,8 @@ struct DisplayMessage {
                  completion(false, "Command cancelled")
             case .success:
                 let command = DisplayMessageCommand(message: message)
+                command.setTimeout(5)
+                command.setClearConfig(1)
                 command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
                     switch event {
                     case .failed:
