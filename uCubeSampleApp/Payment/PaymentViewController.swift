@@ -90,7 +90,7 @@ class PaymentViewController: AlertPresenterTableViewController {
             
             PaymentMessages.LBL_nfc_complete: "complete processing",
             PaymentMessages.LBL_wait_online_pin_process: "online pin processing",
-            PaymentMessages.LBL_wait_card: "insert card",
+            PaymentMessages.LBL_pin_request: "enter pin",
             
             PaymentMessages.LBL_approved: "Approved",
             PaymentMessages.LBL_declined: "Declined",
@@ -119,7 +119,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.displayResult = displayResultOnCubeSwitch.isOn
         paymentRequest.cardWaitTimeout = cardWaitTimeout
         paymentRequest.systemFailureInfo2 = false
-        paymentRequest.forceDebug = true
+        paymentRequest.forceDebug = false
         paymentRequest.transactionDate = Date()
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
@@ -179,8 +179,8 @@ class PaymentViewController: AlertPresenterTableViewController {
         ]
     
         paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
+        paymentRequest.useCardHolderLanguageTasking = UserCardHolderLanguageTask()
       
-        
         paymentResultLabel.isHidden = true
         startButton.isHidden = true
         cancelButton.isHidden = false
