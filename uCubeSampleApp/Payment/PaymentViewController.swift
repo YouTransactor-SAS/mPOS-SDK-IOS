@@ -26,7 +26,7 @@ class PaymentViewController: AlertPresenterTableViewController {
     @IBOutlet weak var cancelButton: UIButton!
     
     private var transactionType: TransactionType = .purchase
-    private var currency: Currency = UCubePaymentRequest.currencyGBP
+    private var currency: Currency = UCubePaymentRequest.currencyEUR
     private var emvPaystateMachine : EMVPaymentStateMachine?
     
     
@@ -272,6 +272,9 @@ class PaymentViewController: AlertPresenterTableViewController {
         })
         alert.addAction(UIAlertAction(title: UCubePaymentRequest.currencyUSD.label, style: .default) { _ in
             completion(UCubePaymentRequest.currencyUSD)
+        })
+        alert.addAction(UIAlertAction(title: UCubePaymentRequest.currencyGBP.label, style: .default) { _ in
+            completion(UCubePaymentRequest.currencyGBP)
         })
         present(alert, animated: true, completion: nil)
     }
