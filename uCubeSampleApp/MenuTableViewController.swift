@@ -85,6 +85,42 @@ class MenuTableViewController: AlertPresenterTableViewController {
         }
     }
     
+    @IBAction func changeLanguage(_ sender: Any) {
+        guard isDeviceSelected() else {
+            return
+        }
+        
+        let alert = UIAlertController(title: "Choose a language", message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "EN", style: .default) { _ in
+            
+            UCubeAPI.setTerminalLanguage(language: RPC.Language.en, didProgress: { (state: UCubeAPI.ProgressState) in
+                LogManager.debug(message: "set terminal language did progress: \(state.name)")
+            }, didFinish: { (success: Bool, parameters: [Any]?) in
+                LogManager.debug(message: "set terminal language did finish: \(success)")
+                self.presentAlert(title: nil, message: "set terminal language did finish: \(success)", actions: [
+                    AlertAction(title: "OK")
+                ])
+            })
+        })
+        alert.addAction(UIAlertAction(title: "FR", style: .default) { _ in
+            UCubeAPI.setTerminalLanguage(language: RPC.Language.fr, didProgress: { (state: UCubeAPI.ProgressState) in
+                LogManager.debug(message: "set terminal language did progress: \(state.name)")
+            }, didFinish: { (success: Bool, parameters: [Any]?) in
+                LogManager.debug(message: "set terminal language did finish: \(success)")
+                var message : String
+                if(success) {
+                    message = "update language OK"
+                }else {
+                    message = "update language Failed"
+                }
+                self.presentAlert(title: nil, message: message, actions: [
+                    AlertAction(title: "OK")
+                ])
+            })
+        })
+        present(alert, animated: true, completion: nil)
+    }
+    
     @IBAction func displayAction(_ sender: Any) {
         guard isDeviceSelected() else {
             return

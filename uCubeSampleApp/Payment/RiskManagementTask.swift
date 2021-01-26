@@ -45,11 +45,13 @@ class RiskManagementTask: RiskManagementTasking {
         ])
     }
     
-    public func cancel() {
+    public func cancel() -> Bool {
         LogManager.debug(message: "risk management Task cancellation!")
         
         //TODO: clean your risk management process's context
         monitor?.eventHandler(.cancelled, [])
+        
+        return true
     }
     
     private func end(tvr: Data) {
