@@ -57,9 +57,16 @@ class PaymentViewController: AlertPresenterTableViewController {
     }
     
     @IBAction func cancelPayment(_ sender: Any) {
-        cancelButton.isEnabled = false
-        
-        self.emvPaystateMachine?.cancel()
+        guard
+            let paymentStateMachine = self.emvPaystateMachine
+            else {
+                return
+        }
+    
+        let res = paymentStateMachine.cancel()
+        if(res) {
+            cancelButton.isEnabled = false
+        }
     }
     
     @IBAction func startPayment(_ sender: Any) {
@@ -188,6 +195,11 @@ class PaymentViewController: AlertPresenterTableViewController {
             LogManager.debug(message: "Payment did progress: \(state.name)")
             self.paymentStateLabel.text = state.name
             self.paymentStateLabel.isHidden = false
+            
+            if(state == .cardReadEnd) {
+                self.cancelButton.isHidden = true
+            }
+            
         }, didFinish: { (context: PaymentContext) in
             LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
             
