@@ -59,19 +59,24 @@ class AuthorizationTask: AuthorizationTasking {
             AlertAction(title: "Declined", handler: {
                 self.end(choice: 1)
             }),
-            AlertAction(title: "Unable to go online", handler: {
+            AlertAction(title: "online request", handler: {
                 self.end(choice: 2)
+            }),
+            AlertAction(title: "Unable to go online", handler: {
+                self.end(choice: 3)
             })
         ])
     }
     
-    public func cancel() {
+    public func cancel() -> Bool {
         LogManager.debug(message: "Authorization Task cancellation!")
         
         //TODO: clean your authorization process's context
         presenter.dismissAlert {}
         
         self.monitor?.eventHandler(.cancelled, [])
+        
+        return true
     }
     
     private func end(choice: Int) {
@@ -81,6 +86,8 @@ class AuthorizationTask: AuthorizationTasking {
         case 1:
             authorizationResponse = Data([0x8A, 0x02, 0x30, 0x35])
         case 2:
+            authorizationResponse = Data([0x8A, 0x02, 0x31, 0x41])
+        case 3:
             authorizationResponse = Data([0x8A, 0x02, 0x39, 0x38])
         default:
             break
