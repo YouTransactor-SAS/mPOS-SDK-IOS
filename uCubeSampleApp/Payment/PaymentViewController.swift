@@ -186,7 +186,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         ]
     
         paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
-       // paymentRequest.useCardHolderLanguageTasking = UserCardHolderLanguageTask()
+        paymentRequest.useCardHolderLanguageTasking = UserCardHolderLanguageTask()
       
         paymentResultLabel.isHidden = true
         startButton.isHidden = true
