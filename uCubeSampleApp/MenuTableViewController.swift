@@ -66,7 +66,7 @@ class MenuTableViewController: AlertPresenterTableViewController {
     
     // MARK: - IBActions
     
-    @IBAction func connectAction(_ sender: UIButton) {
+    /*@IBAction func connectAction(_ sender: UIButton) {
         guard isDeviceSelected() else {
             return
         }
@@ -83,7 +83,57 @@ class MenuTableViewController: AlertPresenterTableViewController {
             ])
             deviceConnection.connect()
         }
+    }*/
+    
+   @IBAction func connectAction(_ sender: UIButton) {
+        guard isDeviceSelected() else {
+            return
+        }
+
+        let device = BLEConnectionManager.shared.getDevice()!
+        if BLEConnectionManager.shared.isConnected {
+            presentAlert(title: nil, message: "Disconnecting from \(device.name)...")
+            BLEConnectionManager.shared.disconnect()
+        } else {
+            presentAlert(title: nil, message: "Connecting to \(device.name)...", actions: [
+                AlertAction(title: "Cancel", handler: {
+                    BLEConnectionManager.shared.cancelConnect()
+                })
+            ])
+
+            BLEConnectionManager.shared.connect(
+                identifier: device.identifier,
+                completion: { _ in
+                    print("BLEConnectionManager.shared.connect(completion:) called")
+                }
+            )
+        }
     }
+    
+  /*  @IBAction func connectAction(_ sender: UIButton) {
+        guard isDeviceSelected() else {
+            return
+        }
+
+        let device = BLEConnectionManager.shared.getDevice()!
+        if BLEConnectionManager.shared.isConnected {
+            presentAlert(title: nil, message: "Disconnecting from \(device.name)...")
+            BLEConnectionManager.shared.disconnect()
+        } else {
+            presentAlert(title: nil, message: "Connecting to \(device.name)...", actions: [
+                AlertAction(title: "Cancel", handler: {
+                    BLEConnectionManager.shared.cancelConnect()
+                })
+            ])
+
+            BLEConnectionManager.shared.connect(
+                identifier: device.identifier,
+                completion: { _ in
+                    print("BLEConnectionManager.shared.connect(completion:) called")
+                }
+            )
+        }
+    }*/
     
     @IBAction func changeLanguage(_ sender: Any) {
         guard isDeviceSelected() else {
