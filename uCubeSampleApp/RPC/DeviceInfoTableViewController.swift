@@ -49,31 +49,18 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.emvL2Checksum
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
-
-        let exitSecureSession = ExitSecureSessionCommand() // if device is in secure state back to ready state befaore calling display
-        exitSecureSession.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
+        let command = GetInfoCommand(tags: uInt8Tags)
+        command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
             switch event {
             case .failed, .cancelled:
                 self.deviceInfo = DeviceInfo(tlv: Data())
                 self.tableView.tableHeaderView = nil
                 self.tableView.reloadData()
+                break
             case .success:
-                let command = GetInfoCommand(tags: uInt8Tags)
-                command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
-                    switch event {
-                    case .failed, .cancelled:
-                        self.deviceInfo = DeviceInfo(tlv: Data())
-                        self.tableView.tableHeaderView = nil
-                        self.tableView.reloadData()
-                        break
-                    case .success:
-                        self.deviceInfo = DeviceInfo(tlv: (parameters[0] as! GetInfoCommand).getResponseData() ?? Data())
-                        self.tableView.tableHeaderView = nil
-                        self.tableView.reloadData()
-                    default:
-                        break
-                    }
-                }))
+                self.deviceInfo = DeviceInfo(tlv: (parameters[0] as! GetInfoCommand).getResponseData() ?? Data())
+                self.tableView.tableHeaderView = nil
+                self.tableView.reloadData()
             default:
                 break
             }
