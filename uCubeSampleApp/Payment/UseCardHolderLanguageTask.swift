@@ -122,11 +122,11 @@ class UserCardHolderLanguageTask: UseCardHolderLanguageTasking {
         self.monitor?.eventHandler(.success, [])
     }
     
-    public func cancel() -> Bool {
+    public func cancel(completion: (Bool) -> Void) {
         LogManager.debug(message: "Task cancellation!")
         //TODO: clean your process's context
         monitor?.eventHandler(.cancelled, [])
-        return true
+        completion(true)
     }
     
 }

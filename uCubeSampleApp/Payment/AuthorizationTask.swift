@@ -71,15 +71,14 @@ class AuthorizationTask: AuthorizationTasking {
         ])
     }
     
-    public func cancel() -> Bool {
+    public func cancel(completion: (Bool) -> Void) {
         LogManager.debug(message: "Authorization Task cancellation!")
         
         //TODO: clean your authorization process's context
         presenter.dismissAlert {}
         
         self.monitor?.eventHandler(.cancelled, [])
-        
-        return true
+        completion(true)
     }
     
     private func end(choice: Int) {
