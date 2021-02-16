@@ -63,10 +63,12 @@ class PaymentViewController: AlertPresenterTableViewController {
                 return
         }
     
-        let res = paymentStateMachine.cancel()
-        if(res) {
-            cancelButton.isEnabled = false
+        paymentStateMachine.cancel{ (status) in
+            if(status) {
+                self.cancelButton.isEnabled = false
+            }
         }
+        
     }
     
     @IBAction func startPayment(_ sender: Any) {
