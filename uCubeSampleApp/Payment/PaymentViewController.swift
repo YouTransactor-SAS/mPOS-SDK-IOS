@@ -17,7 +17,6 @@ class PaymentViewController: AlertPresenterTableViewController {
     @IBOutlet weak var contactOnlySwitch: UISwitch!
     @IBOutlet weak var forceAuthorizationSwitch: UISwitch!
     @IBOutlet weak var forceOnlinePinSwitch: UISwitch!
-    @IBOutlet weak var displayResultOnCubeSwitch: UISwitch!
     @IBOutlet weak var amountTextField: UITextField!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var paymentResultLabel: UILabel!
@@ -88,44 +87,10 @@ class PaymentViewController: AlertPresenterTableViewController {
             readers.append(.NFC)
         }
         
-        let messages:[PaymentMessages:String] = [
-            
-            PaymentMessages.LBL_prepare_context: "preparing context",
-            PaymentMessages.LBL_authorization: "Authorization processing",
-            PaymentMessages.LBL_smc_initialization: "initialization processing",
-            PaymentMessages.LBL_smc_risk_management: "risque management processing",
-            PaymentMessages.LBL_smc_finalization: "finalization processing",
-            PaymentMessages.LBL_smc_remove_card: "remove card, please",
-            
-            PaymentMessages.LBL_nfc_complete: "complete processing",
-            PaymentMessages.LBL_wait_online_pin_process: "online pin processing",
-            PaymentMessages.LBL_pin_request: "enter pin",
-            
-            PaymentMessages.LBL_approved: "Approved",
-            PaymentMessages.LBL_declined: "Declined",
-            PaymentMessages.LBL_unsupported_card: "Unsupported card",
-            PaymentMessages.LBL_cancelled: "Cancelled",
-            PaymentMessages.LBL_error: "Error",
-            PaymentMessages.LBL_no_card_detected: "No card detected",
-            PaymentMessages.LBL_wrong_activated_reader: "wrong activated reader",
-            
-            PaymentMessages.LBL_try_other_interface: "try other interface",
-            PaymentMessages.LBL_end_application: "end application ",
-            PaymentMessages.LBL_failed: "failed",
-            PaymentMessages.LBL_wrong_nfc_outcome: "wrong nfc outcome",
-        
-            PaymentMessages.LBL_wrong_cryptogram_value: "wrong cryptogram value",
-            PaymentMessages.LBL_missing_required_cryptogram: "missing required cryptogram",
-            PaymentMessages.GLOBAL_LBL_xposition: "00",
-            PaymentMessages.GLOBAL_LBL_yposition: "0C",
-            PaymentMessages.GLOBAL_LBL_font_id: "00",
-        ]
-        
         // non optional variables
-        var paymentRequest = UCubePaymentRequest(amount: amountValue, currency: currency, transactionType: transactionType, readers: readers, messages: messages, authorizationTask: AuthorizationTask(presenter: self), preferredLanguages: ["en"] )
+        var paymentRequest = UCubePaymentRequest(amount: amountValue, currency: currency, transactionType: transactionType, readers: readers, authorizationTask: AuthorizationTask(presenter: self), preferredLanguages: ["en"] )
         
         // optional variables
-        paymentRequest.displayResult = displayResultOnCubeSwitch.isOn
         paymentRequest.cardWaitTimeout = cardWaitTimeout
         paymentRequest.systemFailureInfo2 = false
         paymentRequest.forceDebug = false
@@ -188,8 +153,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         ]
     
         paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
-        paymentRequest.useCardHolderLanguageTasking = UserCardHolderLanguageTask()
-      
+       
         paymentResultLabel.isHidden = true
         startButton.isHidden = true
         cancelButton.isHidden = false
