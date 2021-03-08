@@ -277,46 +277,52 @@ inquiry
 #### Pay API
 ```swift
 UCubeAPI.pay(
-  paymentRequest: paymentRequest,
-  didProgress: { state: ServiceState in
-    // your code here
-  },
-  didFinish: { (success: Bool, paymentContext: PaymentContext) in
-    // your code here
-  }
+	paymentRequest: paymentRequest,
+	didProgress: { state: ServiceState in
+	// your code here
+	},
+	didFinish: { (success: Bool, paymentContext: PaymentContext) in
+	// your code here
+	}
 )
 ```
 #### UCubePaymentRequest
 ```swift
-  var paymentRequest = UCubePaymentRequest()
-    paymentRequest.amount = 15.0
-    paymentRequest.currency = UCubePaymentRequest.currencyEUR // Indicates the currency code of the transaction according to ISO 4217
-    paymentRequest.transactionType = .purchase
-    paymentRequest.transactionDate = Date()
-  paymentRequest.cardWaitTimeout = 30
-  paymentRequest.displayResult = true // at the end of transaction is the SDK display the payment result on uCube or just return the result
-  paymentRequest.readers = [
-    RPC.Reader.icc,
-    RPC.Reader.nfc
-  ]
-  paymentRequest.forceOnlinePIN = true // Applicable for NFC and MSR
-  paymentRequest.forceAuthorization = true
-  paymentRequest.requestedAuthorizationTags = [
-    RPC.Tag.tvr,
-    RPC.Tag.tsi
-  ]
-  paymentRequest.requestedSecuredTags = [
-    RPC.Tag.track2EquData
-  ]
-  paymentRequest.requestedPlainTags = [
-    RPC.Tag.msrBin
-  ]
-  paymentRequest.applicationSelectionTask = ApplicationSelectionTask() // if not set the SDK use the EMV default selection
-  paymentRequest.authorizationTask = AuthorizationTask() // Mandatory
-  paymentRequest.riskManagementTask = RiskManagementTask() // Mandatory
-  paymentRequest.systemFailureInfo = true // get the transaction level 1 Logs
-  paymentRequest.systemFailureInfo2 = true // get the transaction level 2 Logs\
-  paymentRequest.preferredLanguages = ["en"] // each language represented by 2 alphabetical characters according to ISO 639
+// non optional variables
+var paymentRequest = UCubePaymentRequest(amount: amountValue, currency: currency, transactionType: transactionType, readers: readers, authorizationTask: AuthorizationTask(presenter: self), preferredLanguages: ["en"] )
+        
+// optional variables
+paymentRequest.cardWaitTimeout = cardWaitTimeout
+paymentRequest.systemFailureInfo2 = false
+paymentRequest.forceDebug = false
+paymentRequest.transactionDate = Date()
+paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
+paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
+paymentRequest.authorizationPlainTags = [
+            RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
+            RPC.EMVTag.TAG_50_APPLICATION_LABEL,
+            RPC.EMVTag.TAG_5F2A_TRANSACTION_CURRENCY_CODE,
+            RPC.EMVTag.TAG_5F34_APPLICATION_PRIMARY_ACCOUNT_NUMBER_SEQUENCE_NUMBE
+	    ]
+paymentRequest.authorizationSecuredTags = [
+            RPC.EMVTag.TAG_SECURE_5A_APPLICATION_PRIMARY_ACCOUNT_NUMBER,
+            RPC.EMVTag.TAG_SECURE_57_TRACK_2_EQUIVALENT_DATA,
+            RPC.EMVTag.TAG_SECURE_56_TRACK_1_DATA,
+            RPC.EMVTag.TAG_SECURE_5F20_CARDHOLDER_NAME
+	    ]
+paymentRequest.finalizationPlainTags = [
+            RPC.EMVTag.TAG_8E_CARDHOLDER_VERIFICATION_METHOD_LIST,
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_9B_TRANSACTION_STATUS_INFORMATION,
+            RPC.EMVTag.TAG_99_TRANSACTION_PERSONAL_IDENTIFICATION_NUMBER_DATA
+	    ]	    
+paymentRequest.finalizationSecuredTags = [
+	   RPC.EMVTag.TAG_SECURE_5F24_APPLICATION_EXPIRATION_DATE,
+           RPC.EMVTag.TAG_SECURE_5F30_SERVICE_CODE
+	   ]
+paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
+	    
+
 ```
 #### PaymentContext
 ```swift
