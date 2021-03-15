@@ -6,6 +6,7 @@
 //  Copyright © 2020 YouTransactor. All rights reserved.
 //
 
+import CoreBluetooth
 import UIKit
 import UCube
 
@@ -34,6 +35,15 @@ class MenuTableViewController: AlertPresenterTableViewController {
             self.connectButton.setTitle("CONNECT", for: .normal)
         }
         updateMDMButtons()
+        BLEConnectionManager.shared.retriveDevicesConnectedViaSystemMenu(completion: { (success: Bool, devicesConnected: [CBPeripheral]?) in
+                if(!success) {
+                    return
+                }
+                
+            self.presentAlert(message: "Warning! Device \(devicesConnected?.first?.name ?? "") already connected", actions: [
+                    AlertAction(title: "OK")
+                ])
+            })
     }
     
     func isDeviceSelected(showAlert: Bool = true) -> Bool {
