@@ -30,7 +30,9 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.terminalState,
             RPC.Tag.batteryState,
             RPC.Tag.powerOffTimeout,
-            RPC.Tag.osVersion
+            RPC.Tag.osVersion,
+            RPC.Tag.supportedLocaleList,
+            RPC.Tag.configurationMerchantInterfaceLocale
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
         let command = GetInfoCommand(tags: uInt8Tags)
@@ -66,7 +68,7 @@ class DeviceInfoTableViewController: UITableViewController {
         guard deviceInfo != nil else {
             return 0
         }
-        return 10
+        return 11
     }
     
     private func getNfcModuleText(_ state: UInt8) -> String {
@@ -121,8 +123,18 @@ class DeviceInfoTableViewController: UITableViewController {
             text = "Automatic power off time out: \(deviceInfo?.getAutoPowerOffTimeout()?.description ?? "")"
         case 7:
             text = "EMV ICC Config Version: \(deviceInfo?.getIccEmvConfigVersion() ?? "")"
-        case 9:
+        case 8:
             text = "EMV NFC Config Version: \(deviceInfo?.getNfcEmvConfigVersion() ?? "")"
+        case 9:
+            if let supportedLocaleList = deviceInfo?.getSupportedLocaleList() {
+                text = "Supported locale list :"
+                for locale in supportedLocaleList {
+                    text += locale
+                    text += ", "
+                }
+            }
+        case 10:
+            text = "Merchant Locale : \(deviceInfo?.getMerchantLocale() ?? "")"
         default:
             text = ""
         }

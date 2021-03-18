@@ -150,35 +150,45 @@ class MenuTableViewController: AlertPresenterTableViewController {
             return
         }
         
-        let alert = UIAlertController(title: "Choose a language", message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "EN", style: .default) { _ in
-            
-            UCubeAPI.setTerminalLanguage(language: RPC.Language.en, didProgress: { (state: UCubeAPI.ProgressState) in
-                LogManager.debug(message: "set terminal language did progress: \(state.name)")
-            }, didFinish: { (success: Bool, parameters: [Any]?) in
-                LogManager.debug(message: "set terminal language did finish: \(success)")
-                self.presentAlert(title: nil, message: "set terminal language did finish: \(success)", actions: [
+        self.presentAlert(title: nil, message: "get Supported locale progress...")
+        
+        UCubeAPI.getSupportedLocaleList(didProgress: { (state: UCubeAPI.ProgressState) in
+            LogManager.debug(message: "get supported locale list did progress: \(state.name)")
+        }, didFinish: { (success: Bool, parameters: [Any]?) in
+            if(!success || parameters == nil) {
+                self.presentAlert(title: nil, message: "get supported locale list failed", actions: [
                     AlertAction(title: "OK")
                 ])
-            })
-        })
-        alert.addAction(UIAlertAction(title: "FR", style: .default) { _ in
-            UCubeAPI.setTerminalLanguage(language: RPC.Language.fr, didProgress: { (state: UCubeAPI.ProgressState) in
-                LogManager.debug(message: "set terminal language did progress: \(state.name)")
-            }, didFinish: { (success: Bool, parameters: [Any]?) in
-                LogManager.debug(message: "set terminal language did finish: \(success)")
-                var message : String
-                if(success) {
-                    message = "update language OK"
-                }else {
-                    message = "update language Failed"
+            }else {
+                self.dismissAlert()
+                let supportedLocaleList = parameters as! [String]
+                let alert = UIAlertController(title: "Choose a language", message: nil, preferredStyle: .actionSheet)
+                for locale in supportedLocaleList {
+                    alert.addAction(UIAlertAction(title: locale, style: .default) { _ in
+                        self.setLocale(locale: locale)
+                    })
                 }
-                self.presentAlert(title: nil, message: message, actions: [
+                self.present(alert, animated: true, completion: nil)
+            }
+        })
+    }
+    
+    private func setLocale(locale: String) {
+        self.presentAlert(title: nil, message: "set locale \(locale) progress...")
+        
+        UCubeAPI.setLocale(locale: locale, didProgress: { (state: UCubeAPI.ProgressState) in
+            LogManager.debug(message: "set locale \(locale) did progress: \(state.name)")
+        }, didFinish: { (success: Bool, parameters: [Any]?) in
+            if(success) {
+                self.presentAlert(title: nil, message: "set locale did finish with success", actions: [
                     AlertAction(title: "OK")
                 ])
-            })
+            }else {
+                self.presentAlert(title: nil, message: "set locale failed", actions: [
+                    AlertAction(title: "OK")
+                ])
+            }
         })
-        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func displayAction(_ sender: Any) {
