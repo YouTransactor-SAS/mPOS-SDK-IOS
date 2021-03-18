@@ -201,9 +201,9 @@ class PaymentViewController: AlertPresenterTableViewController {
             LogManager.debug(message: "svpp logs Level 2 tag F4: \(context.tagF4?.hexString ?? "unknown")")
             LogManager.debug(message: "svpp logs Level 2 tag F5: \(context.tagF5?.hexString ?? "unknown")")
            
+            //TODO: send  context.finalizationGetPlainTagsResponse
             if let plainTagTLV = context.finalizationPlainTagsValues {
-                let tags = plainTagTLV.parseTLV()
-                for (tag, value) in tags {
+                for (tag, value) in plainTagTLV {
                     LogManager.debug(message: "Plain tag: 0x\(tag.hexString), \(tag) = 0x\(value.hexString)")
                 }
             }

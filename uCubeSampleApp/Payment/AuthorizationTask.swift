@@ -42,9 +42,9 @@ class AuthorizationTask: AuthorizationTasking {
             
         //TODO: send these tags to the server
         //TODO: call server to do the authorization
+        //TODO: send self.paymentContext?.authorizationGetPlainTagsResponse
         if let plainTagTLV = self.paymentContext?.authorizationPlainTagsValues {
-           let tags = plainTagTLV.parseTLV()
-           for (tag, value) in tags {
+           for (tag, value) in plainTagTLV {
                LogManager.debug(message: "Plain tag: 0x\(tag.hexString), \(tag) = 0x\(value.hexString)")
            }
         }
