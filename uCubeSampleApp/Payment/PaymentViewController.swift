@@ -17,6 +17,7 @@ class PaymentViewController: AlertPresenterTableViewController {
     @IBOutlet weak var contactOnlySwitch: UISwitch!
     @IBOutlet weak var forceAuthorizationSwitch: UISwitch!
     @IBOutlet weak var forceOnlinePinSwitch: UISwitch!
+    @IBOutlet weak var skipCardRemovalSwitch: UISwitch!
     @IBOutlet weak var amountTextField: UITextField!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var paymentResultLabel: UILabel!
@@ -97,6 +98,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.transactionDate = Date()
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
+        paymentRequest.skipCardRemoval = skipCardRemovalSwitch.isOn
         paymentRequest.authorizationPlainTags = [
             RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
             RPC.EMVTag.TAG_50_APPLICATION_LABEL,
