@@ -22,7 +22,6 @@ class DeviceInfoTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         let tags = [
-            RPC.Tag.atmelSerial,
             RPC.Tag.terminalPN,
             RPC.Tag.terminalSN,
             RPC.Tag.firmwareVersion,
@@ -31,22 +30,9 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.terminalState,
             RPC.Tag.batteryState,
             RPC.Tag.powerOffTimeout,
-            RPC.Tag.nfcInfo,
-            RPC.Tag.emvL1ClessLibVersion,
-            RPC.Tag.usbCapability,
             RPC.Tag.osVersion,
-            RPC.Tag.mPOSModuleState,
-            RPC.Tag.tstLoopbackVersion,
-            RPC.Tag.agnosLibVersion,
-            RPC.Tag.aceLayerVersion,
-            RPC.Tag.gpiVersion,
-            RPC.Tag.emvL3Version,
-            RPC.Tag.paymentAppClessVersion,
-            RPC.Tag.pciPedVersion,
-            RPC.Tag.pciPedChecksum,
-            RPC.Tag.emvL1Checksum,
-            RPC.Tag.bootLoaderChecksum,
-            RPC.Tag.emvL2Checksum
+            RPC.Tag.supportedLocaleList,
+            RPC.Tag.configurationMerchantInterfaceLocale
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
         let command = GetInfoCommand(tags: uInt8Tags)
@@ -82,7 +68,7 @@ class DeviceInfoTableViewController: UITableViewController {
         guard deviceInfo != nil else {
             return 0
         }
-        return 10
+        return 11
     }
     
     private func getNfcModuleText(_ state: UInt8) -> String {
@@ -134,13 +120,21 @@ class DeviceInfoTableViewController: UITableViewController {
         case 5:
             text = "OS Version: \(deviceInfo?.getOsVersion() ?? "")"
         case 6:
-            text = "USB Capability: \((deviceInfo?.isUsbCapability() ?? false) ? "YES" : "NO")"
-        case 7:
             text = "Automatic power off time out: \(deviceInfo?.getAutoPowerOffTimeout()?.description ?? "")"
-        case 8:
+        case 7:
             text = "EMV ICC Config Version: \(deviceInfo?.getIccEmvConfigVersion() ?? "")"
-        case 9:
+        case 8:
             text = "EMV NFC Config Version: \(deviceInfo?.getNfcEmvConfigVersion() ?? "")"
+        case 9:
+            if let supportedLocaleList = deviceInfo?.getSupportedLocaleList() {
+                text = "Supported locale list :"
+                for locale in supportedLocaleList {
+                    text += locale
+                    text += ", "
+                }
+            }
+        case 10:
+            text = "Merchant Locale : \(deviceInfo?.getMerchantLocale() ?? "")"
         default:
             text = ""
         }
