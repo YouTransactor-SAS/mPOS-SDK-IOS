@@ -1,6 +1,6 @@
 # YouTransactor mPOS SDK - IOS
 
-###### Release 0.2.0
+###### Release 0.5.16
 
 <p>
   <img src="https://user-images.githubusercontent.com/59020462/86530425-e563bc00-beb8-11ea-821d-23996a2187da.png">
@@ -263,8 +263,172 @@ The default `Logger` is set by default.
 
 #### 6.3 Payment
 
-Once device is selected you can start using the YouTransactor SDK to accept card payments.
-As decribed in the transaction Flow contact and contactless before, durring the payment process the payment state machine will be interrupted to execute some tasks that you implement.
+
+#### Transaction types
+```swift
+purchase
+withdrawal
+refund
+purchaseCashback
+manualCash
+inquiry
+```
+
+#### Pay API
+```swift
+UCubeAPI.pay(
+	paymentRequest: paymentRequest,
+	didProgress: { state: ServiceState in
+	// your code here
+	},
+	didFinish: { (success: Bool, paymentContext: PaymentContext) in
+	// your code here
+	}
+)
+```
+#### UCubePaymentRequest
+```swift
+// non optional variables
+var paymentRequest = UCubePaymentRequest(amount: amountValue, currency: currency, transactionType: transactionType, readers: readers, authorizationTask: AuthorizationTask(presenter: self), preferredLanguages: ["en"] )
+        
+// optional variables
+paymentRequest.cardWaitTimeout = cardWaitTimeout
+paymentRequest.systemFailureInfo2 = false
+paymentRequest.forceDebug = false
+paymentRequest.transactionDate = Date()
+paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
+paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
+paymentRequest.authorizationPlainTags = [
+            RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
+            RPC.EMVTag.TAG_50_APPLICATION_LABEL,
+            RPC.EMVTag.TAG_5F2A_TRANSACTION_CURRENCY_CODE,
+            RPC.EMVTag.TAG_5F34_APPLICATION_PRIMARY_ACCOUNT_NUMBER_SEQUENCE_NUMBE
+	    ]
+paymentRequest.authorizationSecuredTags = [
+            RPC.EMVTag.TAG_SECURE_5A_APPLICATION_PRIMARY_ACCOUNT_NUMBER,
+            RPC.EMVTag.TAG_SECURE_57_TRACK_2_EQUIVALENT_DATA,
+            RPC.EMVTag.TAG_SECURE_56_TRACK_1_DATA,
+            RPC.EMVTag.TAG_SECURE_5F20_CARDHOLDER_NAME
+	    ]
+paymentRequest.finalizationPlainTags = [
+            RPC.EMVTag.TAG_8E_CARDHOLDER_VERIFICATION_METHOD_LIST,
+            RPC.EMVTag.TAG_95_TERMINAL_VERIFICATION_RESULTS,
+            RPC.EMVTag.TAG_9B_TRANSACTION_STATUS_INFORMATION,
+            RPC.EMVTag.TAG_99_TRANSACTION_PERSONAL_IDENTIFICATION_NUMBER_DATA
+	    ]	    
+paymentRequest.finalizationSecuredTags = [
+	   RPC.EMVTag.TAG_SECURE_5F24_APPLICATION_EXPIRATION_DATE,
+           RPC.EMVTag.TAG_SECURE_5F30_SERVICE_CODE
+	   ]
+paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
+	    
+
+```
+#### PaymentContext
+```swift
+    /* input common */
+    public var allowFallback: Bool = false
+    public var retryBeforeFallback: Int = 3
+    public var cardWaitTimeout : TimeInterval = 30
+    public var amount: UInt64 = 0
+    public var currency: Currency = Currency(label: "EUR", code: 978, exponent: 2)
+    public var transactionType: TransactionType?
+    public var transactionDate: Date?
+    public var applicationVersion: Int?
+    public var preferredLanguages: [String]?
+    public var forceOnlinePIN: Bool = false
+    private var forceAuthorization: Bool = false
+    public var onlinePinBlockFormat: UInt8 = RPC.PIN.blockISO9564Format0
+    public var readers: [CardEntryMode] = [.ICC, .NFC]
+    public var getSystemFailureInfoL2: Bool = false // user choose to get logs at the end of transaction
+    public var forceDebug: Bool = false // sdk can force getting logs at the end of transaction if status != approved
+    
+    /* input NFC & ICC */
+    public var authorizationPlainTags: Set<Int>?
+    public var authorizationSecuredTags: Set<Int>?
+    public var finalizationPlainTags: Set<Int>?
+    public var finalizationSecuredTags: Set<Int>?
+    
+    /* output common */
+    public var paymentStatus: PaymentStatus? // END status*/
+    public var uCubeInfo: Data?
+    public var sredKsn: Data?
+    public var pinKsn: Data?
+    public var cardEntryMode: CardEntryMode?
+    public var onlinePinBlock: Data?
+    public var finalizationPlainTagsValues: [Int: Data]?
+    public var authorizationPlainTagsValues: [Int: Data]?
+    public var finalizationSecuredTagsValues: Data?
+    public var authorizationSecuredTagsValues: Data?
+    public var authorizationResponse: Data? //0x8A
+     
+     /* output nfc */
+    public var nfcOutcome: Data?
+    public var signatureRequired: Bool = false
+
+    /* output icc */
+    public var selectedApplication: EMVApplicationDescriptor?
+    private var tvr: Data = Data(repeating: 0, count: 5)
+    public var transactionFinalisationData: Data?
+    public var transactionInitData: Data?
+    public var transactionProcessData: Data?
+    
+    /* output for debug */
+    public var tagCC: Data? // svpp logs level 2 tag CC
+    public var tagF4: Data? // svpp logs level 2 tag F4
+    public var tagF5: Data? // svpp logs level 2 tag F5
+```
+
+#### PaymentState 
+```swift
+// Common states
+    startCancelAll
+    startExitSecureSession
+    getInfo
+    enterSecureSession
+    ksnAvailable
+    startTransaction
+    cardReadEnd
+        
+    // Authorization
+    authorization
+        
+    // End
+    getFinalizationSecuredTags
+    getFinalizationPlainTags
+    getCCL2Log
+    getF4L2Log
+    getF5L2Log
+    endExitSecureSession
+    
+    // SMC states
+    smcBuildCandidateList
+    smcSelectApplication
+    smcUserSelectApplication
+    smcInitTransaction
+    smcRiskManagement
+    smcProcessTransaction
+    smcGetAuthorizationSecuredTags
+    smcGetAuthorizationPlainTags
+    smcFinalizeTransaction
+    smcRemoveCard
+
+    // NFC states
+    nfcGetAuthorizationSecuredTags
+    nfcGetAuthorizationPlainTags
+    nfcSimplifiedOnlinePin
+    nfcCompleteTransaction
+    
+```
+
+#### EMV Payment state machine
+
+![Document sans titre](https://user-images.githubusercontent.com/59020462/110345361-c5c7f900-802e-11eb-9748-94ddd0645aab.png)
+
+The EMV payment state machine is sequence of executing commands and tasks. Bellow you will see the different tasks used at transaction
+
+#### Tasks
+Durring the payment process the payment state machine will be interrupted to execute some tasks that you implement.
 
 #### ApplicationSelectionTasking
 ```swift
@@ -294,14 +458,20 @@ public class EMVApplicationSelectionTask: ApplicationSelectionTasking {
     self.context = context
   }
 
-    @Override
-    public func execute(monitor: TaskMonitoring) {
-        var candidates: [EMVApplicationDescriptor] = []
+  @Override
+  public func execute(monitor: TaskMonitoring) {
+      var candidates: [EMVApplicationDescriptor] = []
 
-        // Todo do AID selection
+      // Todo do AID selection
 
-        monitor.eventHandler(.success, []) // should call this to return to the payment state machine
-    }
+      monitor.eventHandler(.success, []) // should call this to return to the payment state machine
+  }
+
+  @Override
+  public func cancel(completion: (Bool) -> Void) {
+      monitor?.eventHandler(.cancelled, [])
+      completion(true)
+  }
 
 }
 ```
@@ -324,15 +494,21 @@ class RiskManagementTask: RiskManagementTasking {
     self.paymentContext = context
   }
 
-    public func setPaymentContext(_ paymentContext: PaymentContext) {
-        self.paymentContext = paymentContext;
-    }
+  public func setPaymentContext(_ paymentContext: PaymentContext) {
+      self.paymentContext = paymentContext;
+  }
 
-    public func execute(monitor: TaskMonitoring) {
-        // TODO: perform risk management 
-        
-        monitor.eventHandler(.success); // should call this to return to the payment state machine
-    }
+  public func execute(monitor: TaskMonitoring) {
+      // TODO: perform risk management 
+
+      monitor.eventHandler(.success); // should call this to return to the payment state machine
+  }
+
+  @Override
+  public func cancel(completion: (Bool) -> Void) {
+      monitor?.eventHandler(.cancelled, [])
+      completion(true)
+  }
 }
 ```
 #### AuthorizationTasking
@@ -354,153 +530,60 @@ class AuthorizationTask: AuthorizationTasking {
     self.paymentContext = context
   }
 
-    public func execute(monitor: TaskMonitoring) {
-        // TODO: perform authorization
-        
-        monitor.eventHandler(.success); // should call this to return to the payment state machine
-    }
+  public func execute(monitor: TaskMonitoring) {
+      // TODO: perform authorization
+
+      monitor.eventHandler(.success); // should call this to return to the payment state machine
+  }
+
+  @Override
+  public func cancel(completion: (Bool) -> Void) {
+      monitor?.eventHandler(.cancelled, [])
+      completion(true)
+  }
+}
+```
+##### PaymentStatus
+```swift
+    approved, // Transaction has been approved by terminal
+    declined, // Transaction has been declined by terminal
+    /* Cancelled Status cases:
+        1/ GPO not read yet and application calls payment.cancel()
+        2/ one of commands returns -32 or -28 status
+        3/ NFC_Outcome[1] = 0x3A Transaction_cancelled
+    */
+    cancelled,
+
+    cardWaitFailed,//Transaction has been failed because customer does not present a card and startNFCTransaction fail
+    unsupportedCard, ///Transaction has been failed: Error returned by terminal, at contact transaction, when no application match between card and terminal's configuration
+
+    nfcOutcomeTryOtherInterface, // Transaction has been failed: Error returned by terminal, at contactless transaction
+    nfcOutcomeEndApplication,// Transaction has been failed: Error returned by terminal, at contactless transaction
+    nfcOutcomeFailed,// Transaction has been failed: Error returned by terminal, at contactless transaction
+
+    error, // Transaction has been failed : when one of the tasks or commands has been fail
+    errorDisconnect,//Transaction has been failed : when there is a disconnect during the transaction
+    errorShuttingDown,//Transaction has been failed : when command fails with SHUTTING_DOWN error during the transaction
+    errorWrongActivatedReader, // Transaction has been failed : when terminal return wrong value in the tag DF70 at startNFCTransaction
+    errorMissingRequiredCryptogram,// Transaction has been failed :when the value of the tag 9f27 is wrong
+    errorWrongCryptogramValue, // Transaction has been failed : when in the response of the transaction process command the tag 9F27 is missing
+    errorWrongNfcOutcome, // Transaction has been failed : when terminal returns wrong values in the nfc outcome byte array
 }
 ```
 
-#### Transaction types
-```swift
-purchase
-withdrawal
-refund
-purchaseCashback
-manualCash
-inquiry
-```
-#### UCubePaymentRequest
-```swift
-  var paymentRequest = UCubePaymentRequest()
-    paymentRequest.amount = 15.0
-    paymentRequest.currency = UCubePaymentRequest.currencyEUR // Indicates the currency code of the transaction according to ISO 4217
-    paymentRequest.transactionType = .purchase
-    paymentRequest.transactionDate = Date()
-  paymentRequest.cardWaitTimeout = 30
-  paymentRequest.displayResult = true // at the end of transaction is the SDK display the payment result on uCube or just return the result
-  paymentRequest.readers = [
-    RPC.Reader.icc,
-    RPC.Reader.nfc
-  ]
-  paymentRequest.forceOnlinePIN = true // Applicable for NFC and MSR
-  paymentRequest.forceAuthorization = true
-  paymentRequest.requestedAuthorizationTags = [
-    RPC.Tag.tvr,
-    RPC.Tag.tsi
-  ]
-  paymentRequest.requestedSecuredTags = [
-    RPC.Tag.track2EquData
-  ]
-  paymentRequest.requestedPlainTags = [
-    RPC.Tag.msrBin
-  ]
-  paymentRequest.applicationSelectionTask = ApplicationSelectionTask() // if not set the SDK use the EMV default selection
-  paymentRequest.authorizationTask = AuthorizationTask() // Mandatory
-  paymentRequest.riskManagementTask = RiskManagementTask() // Mandatory
-  paymentRequest.systemFailureInfo = true // get the transaction level 1 Logs
-  paymentRequest.systemFailureInfo2 = true // get the transaction level 2 Logs\
-  paymentRequest.preferredLanguages = ["en"] // each language represented by 2 alphabetical characters according to ISO 639
-```
+#### Cancel Payment 
+During the transaction, Customer may need to cancel payment. This is only possible before terminal reads card with success, in other words the GPO of card was successfully read. The cancel method returns a callback with status of cancellation. Here is a figure that resume the two kind of states, blue ones the cancellation is possoble the red ones the cancellation not possible. Note that at the end of startTransaction state, if the reader interface was NFC, so the card  was successfully read. The startTransaction step do the wait card and the read card for contactless and only the wait card for contact.  
 
-#### Pay
-```swift
-UCubeAPI.pay(
-  paymentRequest: paymentRequest,
-  didProgress: { state: ServiceState in
-    // your code here
-  },
-  didFinish: { (success: Bool, paymentContext: PaymentContext) in
-    // your code here
-  }
-)
-```
+![payment states](https://user-images.githubusercontent.com/59020462/110348022-7e8f3780-8031-11eb-96a3-35c67997a7e2.png)
 
-#### PaymentState 
-```swift
-// COMMON STATES
-cancelAll
-getInfo
-waitCard // Contact only state
-enterSecureSession
-ksnAvailable
-// SMC STATES
-smcBuildCandidateList
-smcSelectApplication
-smcUserSelectApplication
-smcInitTransaction
-smcRiskManagement
-smcProcessTransaction
-smcFinalizeTransaction
-smcRemoveCard
-// MSR STATES
-msrGetSecuredTags
-msrGetPlainTags
-msrOnlinePIN
-// SingleEntryPoint / NFC STATES
-startNFCTransaction
-nfcGetSecuredTags
-nfcGetPlainTags
-completeNFCTransaction
-// COMMON STATES
-authorization
-exitSecureSession
-displayResult
-getL1Log
-getL2Log
-```
-#### PaymentContext
-```swift
-paymentStatus: PaymentStatus? // END status
-
-selectedApplication: EMVApplicationDescriptor?
-amount: Double = -1
-currency: Currency?
-transactionType: TransactionType?
-applicationVersion: Int?
-preferredLanguages: [String]?
-uCubeInfos: Data?
-sredKsn: Data?
-pinKsn: Data?
-activatedReader: UInt8?
-forceOnlinePIN: Bool = false
-forceAuthorization: Bool = false
-onlinePinBlockFormat: UInt8 = RPC.PIN.blockISO9564Format0
-requestedPlainTags: [Int]?
-requestedSecuredTags: [Int]?
-requestedAuthorizationTags: [Int]?
-securedTagBlock: Data?
-onlinePinBlock: Data?
-plainTagTLV: [Int: Data]?
-authorizationResponse: Data
-tvr: Data = Data(repeating: 0, count: 5)
-transactionDate: Date?
-nfcOutcome: Data?
-transactionFinalisationData: Data?
-transactionInitData: Data?
-transactionProcessData: Data?
-messages: [String: String]?
-alternativeMessages: [String: String]?
-displayResult: Bool = false
-getSystemFailureInfoL1: Bool = false
-getSystemFailureInfoL2: Bool = false
-systemFailureInfo: Data? //svpp logs level 1
-systemFailureInfo2: Data? // svpp logs level 2
-```
-
-##### PaymentStatus
-```swift
-nfcMPOSError
-cardWaitFailed
-cancelled
-unsupportedCard
-tryOtherInterface
-refusedCard
-error
-approved
-declined
-```
+```java
+            emvPaystateMachine = UCubeAPI.pay(...);
+	    
+	   ....
+	    emvPaystateMachine.cancel{ (status) in
+            //TODO : do stuff here
+        }
+```   
 
 #### 6.4 MDM 
 
