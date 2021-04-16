@@ -141,7 +141,7 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="84" height="38"/>
                                                             <color key="backgroundColor" systemColor="systemGray4Color"/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
-                                                            <state key="normal" title="set Lang">
+                                                            <state key="normal" title="SET LANG">
                                                                 <color key="titleColor" systemColor="labelColor"/>
                                                             </state>
                                                             <userDefinedRuntimeAttributes>

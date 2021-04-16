@@ -161,10 +161,10 @@ class MenuTableViewController: AlertPresenterTableViewController {
                 ])
             }else {
                 self.dismissAlert()
-                let supportedLocaleList = parameters as! [String]
+                let supportedLocaleList = parameters as! [Locale]
                 let alert = UIAlertController(title: "Choose a language", message: nil, preferredStyle: .actionSheet)
                 for locale in supportedLocaleList {
-                    alert.addAction(UIAlertAction(title: locale, style: .default) { _ in
+                    alert.addAction(UIAlertAction(title: locale.identifier, style: .default) { _ in
                         self.setLocale(locale: locale)
                     })
                 }
@@ -173,7 +173,7 @@ class MenuTableViewController: AlertPresenterTableViewController {
         })
     }
     
-    private func setLocale(locale: String) {
+    private func setLocale(locale: Locale) {
         self.presentAlert(title: nil, message: "set locale \(locale) progress...")
         
         UCubeAPI.setLocale(locale: locale, didProgress: { (state: UCubeAPI.ProgressState) in
