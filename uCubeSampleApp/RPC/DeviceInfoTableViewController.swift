@@ -129,12 +129,12 @@ class DeviceInfoTableViewController: UITableViewController {
             if let supportedLocaleList = deviceInfo?.getSupportedLocaleList() {
                 text = "Supported locale list :"
                 for locale in supportedLocaleList {
-                    text += locale
+                    text += locale.identifier
                     text += ", "
                 }
             }
         case 10:
-            text = "Merchant Locale : \(deviceInfo?.getMerchantLocale() ?? "")"
+            text = "Merchant Locale : \(deviceInfo?.getMerchantLocale()?.identifier ?? "")"
         default:
             text = ""
         }
