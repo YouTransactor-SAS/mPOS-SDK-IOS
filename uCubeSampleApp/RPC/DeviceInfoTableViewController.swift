@@ -32,7 +32,8 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.powerOffTimeout,
             RPC.Tag.osVersion,
             RPC.Tag.supportedLocaleList,
-            RPC.Tag.configurationMerchantInterfaceLocale
+            RPC.Tag.configurationMerchantInterfaceLocale,
+            RPC.Tag.terminalChargingStatus
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
         let command = GetInfoCommand(tags: uInt8Tags)
@@ -68,7 +69,7 @@ class DeviceInfoTableViewController: UITableViewController {
         guard deviceInfo != nil else {
             return 0
         }
-        return 11
+        return 12
     }
     
     private func getNfcModuleText(_ state: UInt8) -> String {
@@ -135,6 +136,21 @@ class DeviceInfoTableViewController: UITableViewController {
             }
         case 10:
             text = "Merchant Locale : \(deviceInfo?.getMerchantLocale() ?? "")"
+        case 11:
+            if(deviceInfo?.getChargingStatus() == nil) {
+                text = "unknown"
+            }else {
+                switch deviceInfo?.getChargingStatus() {
+                case 0x00:
+                    text = "Battry State : battery is NOT charging"
+                case 0x01:
+                    text = "Battry State : battery is charging"
+                case 0x03:
+                    text = "Battry State : battery is full and dongle is plugged to the USB."
+                default:
+                    text = "Battry State : unknown"
+                }
+            }
         default:
             text = ""
         }
