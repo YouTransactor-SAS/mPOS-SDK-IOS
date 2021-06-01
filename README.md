@@ -1,6 +1,6 @@
 # YouTransactor mPOS SDK - IOS
 
-###### Release 0.5.17
+###### Release 0.5.21
 
 <p>
   <img src="https://user-images.githubusercontent.com/59020462/86530425-e563bc00-beb8-11ea-821d-23996a2187da.png">
@@ -327,8 +327,6 @@ paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
 #### PaymentContext
 ```swift
     /* input common */
-    public var allowFallback: Bool = false
-    public var retryBeforeFallback: Int = 3
     public var cardWaitTimeout : TimeInterval = 30
     public var amount: UInt64 = 0
     public var currency: Currency = Currency(label: "EUR", code: 978, exponent: 2)
