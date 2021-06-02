@@ -19,6 +19,8 @@ class PaymentViewController: AlertPresenterTableViewController {
     @IBOutlet weak var forceOnlinePinSwitch: UISwitch!
     @IBOutlet weak var skipCardRemovalSwitch: UISwitch!
     @IBOutlet weak var skipStartingStepsSwitch: UISwitch!
+    @IBOutlet weak var forceDebugSwitch: UISwitch!
+    @IBOutlet weak var retriveF5Switch: UISwitch!
     @IBOutlet weak var amountTextField: UITextField!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var paymentResultLabel: UILabel!
@@ -95,12 +97,13 @@ class PaymentViewController: AlertPresenterTableViewController {
         // optional variables
         paymentRequest.cardWaitTimeout = cardWaitTimeout
         paymentRequest.systemFailureInfo2 = false
-        paymentRequest.forceDebug = false
+        paymentRequest.forceDebug = forceDebugSwitch.isOn
         paymentRequest.transactionDate = Date()
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
         paymentRequest.skipCardRemoval = skipCardRemovalSwitch.isOn
         paymentRequest.skipStartingSteps = skipStartingStepsSwitch.isOn
+        paymentRequest.retrieveF5Tag = retriveF5Switch.isOn
         paymentRequest.authorizationPlainTags = [
             RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
             RPC.EMVTag.TAG_50_APPLICATION_LABEL,
