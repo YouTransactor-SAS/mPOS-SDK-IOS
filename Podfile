@@ -8,7 +8,7 @@ target 'uCubeSampleApp' do
   # Pods for uCubeSampleApp
   
   # Framework only
-  #pod 'UCube', :git => 'git@github.com:YouTransactor/mPOS-SDK-IOS-Framework.git', :tag => 'v0.5.19'
+  #pod 'UCube', :git => 'git@github.com:YouTransactor/mPOS-SDK-IOS-Framework.git', :tag => 'v0.5.22'
   
   # Development
   pod 'UCube', :path => '../mPOS-SDK-IOS-Source-Code'
