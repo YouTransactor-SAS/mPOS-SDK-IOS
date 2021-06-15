@@ -35,7 +35,7 @@ class MenuTableViewController: AlertPresenterTableViewController {
             self.connectButton.setTitle("CONNECT", for: .normal)
         }
         updateMDMButtons()
-        BLEConnectionManager.shared.retriveDevicesConnectedViaSystemMenu(completion: { (success: Bool, devicesConnected: [CBPeripheral]?) in
+        BLEConnectionManager.shared.retrieveDevicesConnectedViaSystemMenu(completion: { (success: Bool, devicesConnected: [CBPeripheral]?) in
                 if(!success) {
                     return
                 }
