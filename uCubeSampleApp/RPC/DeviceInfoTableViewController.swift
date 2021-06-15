@@ -33,7 +33,9 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.osVersion,
             RPC.Tag.supportedLocaleList,
             RPC.Tag.configurationMerchantInterfaceLocale,
-            RPC.Tag.terminalChargingStatus
+            RPC.Tag.terminalChargingStatus,
+            RPC.Tag.bleFirmwareVersion,
+            RPC.Tag.resourcesFileVersion
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
         let command = GetInfoCommand(tags: uInt8Tags)
@@ -69,7 +71,7 @@ class DeviceInfoTableViewController: UITableViewController {
         guard deviceInfo != nil else {
             return 0
         }
-        return 12
+        return 14
     }
     
     private func getNfcModuleText(_ state: UInt8) -> String {
@@ -151,6 +153,10 @@ class DeviceInfoTableViewController: UITableViewController {
                     text = "Battry State : unknown"
                 }
             }
+        case 12:
+            text = "BLE version : \(deviceInfo?.getBleFirmwareVersion() ?? "")"
+        case 13:
+            text = "Resources file version : \(deviceInfo?.getResourcesFileVersion() ?? "")"
         default:
             text = ""
         }
