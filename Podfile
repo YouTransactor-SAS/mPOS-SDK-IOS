@@ -11,6 +11,15 @@ target 'uCubeSampleApp' do
   #pod 'UCube', :git => 'git@github.com:YouTransactor/mPOS-SDK-IOS-Framework.git', :tag => 'v0.5.23'
   
   # Development
-  pod 'UCube', :path => '../mPOS-SDK-IOS-Source-Code'
+  pod 'UCube', :path => '../mPOS-SDK-IOS-Framework'
 
+end
+
+#Sets the Build library for distribution to yes for all pods 
+post_install do |installer|
+installer.pods_project.targets.each do |target|
+target.build_configurations.each do |config|
+config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+end
+end
 end
