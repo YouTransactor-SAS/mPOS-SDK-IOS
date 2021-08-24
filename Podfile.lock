@@ -4,7 +4,7 @@ PODS:
   - Zip (1.1.0)
 
 DEPENDENCIES:
-  - UCube (from `../mPOS-SDK-IOS-Source-Code`)
+  - UCube (from `../mPOS-SDK-IOS-Framework`)
 
 SPEC REPOS:
   trunk:
@@ -12,12 +12,12 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   UCube:
-    :path: "../mPOS-SDK-IOS-Source-Code"
+    :path: "../mPOS-SDK-IOS-Framework"
 
 SPEC CHECKSUMS:
-  UCube: eced1f30fdec3b95a3190097a529ad5af8fe2831
+  UCube: bf1b78963a9398c1c06fbadb073ca9cf6b575f74
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: a0c482620b29251f6045772dd8e8ea4955bfedc3
+PODFILE CHECKSUM: f9c26afe006f5118e9afcfb972d62a5438e7c5d3
 
 COCOAPODS: 1.10.1

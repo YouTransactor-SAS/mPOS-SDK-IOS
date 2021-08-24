@@ -1,6 +1,6 @@
 # YouTransactor mPOS SDK - IOS
 
-###### Release 0.5.21
+###### Release 0.5.23
 
 <p>
   <img src="https://user-images.githubusercontent.com/59020462/86530425-e563bc00-beb8-11ea-821d-23996a2187da.png">
