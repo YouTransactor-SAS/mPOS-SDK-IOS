@@ -173,6 +173,10 @@ class PaymentViewController: AlertPresenterTableViewController {
                 self.cancelButton.isHidden = true
             }
             
+            if(state == .waitingCard) {
+                self.cancelButton.isHidden = false
+            }
+            
         }, didFinish: { (context: PaymentContext) in
             LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
             
