@@ -1,10 +1,22 @@
-//
-//  DeviceInfoTableViewController.swift
-//  uCubeSampleApp
-//
-//  Created by Rémi Hillairet on 7/17/20.
-//  Copyright © 2020 YouTransactor. All rights reserved.
-//
+/*============================================================================
+
+* Copyright © 2022 YouTransactor.
+* All Rights Reserved.
+*
+* This software is the confidential and proprietary information of YouTransactor
+* ("Confidential Information"). You  shall not disclose or redistribute such
+* Confidential Information and shall use it only in accordance with the terms of
+* the license agreement you entered into with YouTransactor.
+*
+* This software is provided by YouTransactor AS IS, and YouTransactor
+* makes no representations or warranties about the suitability of the software,
+* either express or implied, including but not limited to the implied warranties
+* of merchantability, fitness for a particular purpose or non-infringement.
+* YouTransactor shall not be liable for any direct, indirect, incidental,
+* special, exemplary, or consequential damages suffered by licensee as the
+* result of using, modifying or distributing this software or its derivatives.
+*
+*==========================================================================*/
 
 import UIKit
 import UCube
@@ -35,13 +47,15 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.configurationMerchantInterfaceLocale,
             RPC.Tag.terminalChargingStatus,
             RPC.Tag.bleFirmwareVersion,
-            RPC.Tag.resourcesFileVersion
+            RPC.Tag.resourcesFileVersion,
+            RPC.Tag.speedMode
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
         let command = GetInfoCommand(tags: uInt8Tags)
         command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
             switch event {
             case .failed, .cancelled:
+                print("get info failed with status \(event)")
                 self.deviceInfo = DeviceInfo(tlv: Data())
                 self.tableView.tableHeaderView = nil
                 self.tableView.reloadData()
@@ -71,38 +85,7 @@ class DeviceInfoTableViewController: UITableViewController {
         guard deviceInfo != nil else {
             return 0
         }
-        return 14
-    }
-    
-    private func getNfcModuleText(_ state: UInt8) -> String {
-        var nfcModuleState = ""
-        switch state {
-        case 0x00:
-            nfcModuleState = "no mpos module available"
-        case 0x01:
-            nfcModuleState = "mpos module initializing"
-        case 0x02:
-            nfcModuleState = "mpos initialization done"
-        case 0x03:
-            nfcModuleState = "mpos module is ready"
-        case 0x04:
-            nfcModuleState = "mpos module is in bootloader mode"
-        case 0x05:
-            nfcModuleState = "mpos bootloader initializing"
-        case 0x06:
-            nfcModuleState = "mpos module faces an internal error"
-        case 0x07:
-            nfcModuleState = "mpos module firmware not loaded"
-        case 0x08:
-            nfcModuleState = "mpos firmware update is ongoing"
-        case 0x09:
-            nfcModuleState = "mpos app firmware is corrupted"
-        case 0x10:
-            nfcModuleState = "mpos bootloader firmware is corrupted"
-        default:
-            break
-        }
-        return nfcModuleState
+        return 15
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -144,19 +127,32 @@ class DeviceInfoTableViewController: UITableViewController {
             }else {
                 switch deviceInfo?.getChargingStatus() {
                 case 0x00:
-                    text = "Battry State : battery is NOT charging"
+                    text = "Battery State : battery is NOT charging"
                 case 0x01:
-                    text = "Battry State : battery is charging"
+                    text = "Battery State : battery is charging"
                 case 0x03:
-                    text = "Battry State : battery is full and dongle is plugged to the USB."
+                    text = "Battery State : battery is full and dongle is plugged to the USB."
                 default:
-                    text = "Battry State : unknown"
+                    text = "Battery State : unknown"
                 }
             }
         case 12:
             text = "BLE version : \(deviceInfo?.getBleFirmwareVersion() ?? "")"
         case 13:
             text = "Resources file version : \(deviceInfo?.getResourcesFileVersion() ?? "")"
+        case 14:
+            if(deviceInfo?.getSpeedMode() == nil) {
+                text = "Speed Mode unknown"
+            }else {
+                switch deviceInfo?.getSpeedMode() {
+                case 0:
+                    text = "SLOW MODE"
+                case 1:
+                    text = "QUICK MODE"
+                default:
+                    text = "Speed Mode unknown"
+                }
+            }
         default:
             text = ""
         }
@@ -164,50 +160,4 @@ class DeviceInfoTableViewController: UITableViewController {
         cell.textLabel?.text = text
         return cell
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

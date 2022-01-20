@@ -1,10 +1,22 @@
-//
-//  MenuTableViewController.swift
-//  uCubeSampleApp
-//
-//  Created by Rémi Hillairet on 7/10/20.
-//  Copyright © 2020 YouTransactor. All rights reserved.
-//
+/*============================================================================
+
+* Copyright © 2022 YouTransactor.
+* All Rights Reserved.
+*
+* This software is the confidential and proprietary information of YouTransactor
+* ("Confidential Information"). You  shall not disclose or redistribute such
+* Confidential Information and shall use it only in accordance with the terms of
+* the license agreement you entered into with YouTransactor.
+*
+* This software is provided by YouTransactor AS IS, and YouTransactor
+* makes no representations or warranties about the suitability of the software,
+* either express or implied, including but not limited to the implied warranties
+* of merchantability, fitness for a particular purpose or non-infringement.
+* YouTransactor shall not be liable for any direct, indirect, incidental,
+* special, exemplary, or consequential damages suffered by licensee as the
+* result of using, modifying or distributing this software or its derivatives.
+*
+*==========================================================================*/
 
 import CoreBluetooth
 import UIKit
@@ -65,27 +77,6 @@ class MenuTableViewController: AlertPresenterTableViewController {
         }
     }
     
-    // MARK: - IBActions
-    
-    /*@IBAction func connectAction(_ sender: UIButton) {
-        guard isDeviceSelected() else {
-            return
-        }
-        
-        let device = BLEConnectionManager.shared.getDevice()!
-        if BLEConnectionManager.shared.isConnected {
-            presentAlert(title: nil, message: "Disconnecting from \(device.name)...")
-            deviceConnection.disconnect()
-        } else {
-            presentAlert(title: nil, message: "Connecting to \(device.name)...", actions: [
-                AlertAction(title: "Cancel", handler: {
-                    BLEConnectionManager.shared.cancelConnect()
-                })
-            ])
-            deviceConnection.connect()
-        }
-    }*/
-    
    @IBAction func connectAction(_ sender: UIButton) {
         guard isDeviceSelected() else {
             return
@@ -110,31 +101,6 @@ class MenuTableViewController: AlertPresenterTableViewController {
             )
         }
     }
-    
-  /*  @IBAction func connectAction(_ sender: UIButton) {
-        guard isDeviceSelected() else {
-            return
-        }
-
-        let device = BLEConnectionManager.shared.getDevice()!
-        if BLEConnectionManager.shared.isConnected {
-            presentAlert(title: nil, message: "Disconnecting from \(device.name)...")
-            BLEConnectionManager.shared.disconnect()
-        } else {
-            presentAlert(title: nil, message: "Connecting to \(device.name)...", actions: [
-                AlertAction(title: "Cancel", handler: {
-                    BLEConnectionManager.shared.cancelConnect()
-                })
-            ])
-
-            BLEConnectionManager.shared.connect(
-                identifier: device.identifier,
-                completion: { _ in
-                    print("BLEConnectionManager.shared.connect(completion:) called")
-                }
-            )
-        }
-    }*/
     
     @IBAction func changeLanguage(_ sender: Any) {
         guard isDeviceSelected() else {
@@ -219,7 +185,6 @@ class MenuTableViewController: AlertPresenterTableViewController {
             }) { (success, parameters) in
                 if success {
                     let updates = parameters![0] as! [BinaryUpdate]
-//                    let configs = parameters![1] as! [Config]
                     if updates.count == 0 {
                         self.presentAlert(message: "uCube is up-to-date", actions: [
                             AlertAction(title: "OK")
