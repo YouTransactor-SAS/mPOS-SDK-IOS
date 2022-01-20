@@ -1,10 +1,22 @@
-//
-//  MainViewController.swift
-//  uCubeSampleApp
-//
-//  Created by Rémi Hillairet on 7/10/20.
-//  Copyright © 2020 YouTransactor. All rights reserved.
-//
+/*============================================================================
+
+* Copyright © 2022 YouTransactor.
+* All Rights Reserved.
+*
+* This software is the confidential and proprietary information of YouTransactor
+* ("Confidential Information"). You  shall not disclose or redistribute such
+* Confidential Information and shall use it only in accordance with the terms of
+* the license agreement you entered into with YouTransactor.
+*
+* This software is provided by YouTransactor AS IS, and YouTransactor
+* makes no representations or warranties about the suitability of the software,
+* either express or implied, including but not limited to the implied warranties
+* of merchantability, fitness for a particular purpose or non-infringement.
+* YouTransactor shall not be liable for any direct, indirect, incidental,
+* special, exemplary, or consequential damages suffered by licensee as the
+* result of using, modifying or distributing this software or its derivatives.
+*
+*==========================================================================*/
 
 import UIKit
 import UCube
@@ -46,11 +58,6 @@ class MainViewController: UIViewController {
                     LogManager.debug(message: "No device found with identifier: \(identifier)")
                 }
             }
-//            BLEConnectionManager.shared.connect(identifier: identifier) { status in
-//                LogManager.debug(message: "Connection to identifier: \(identifier), status: \(status)")
-//            }
-            // You can connect directly with UCubeDevice
-//            BLEConnectionManager.shared.connect(device: device)
         }
         appVersionLabel.text = "UCube Example v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "")"
         frameworkVersionLabel.text = "UCube Framework v\(Bundle(for: BLEConnectionManager.self).infoDictionary?["CFBundleShortVersionString"] ?? "")"
