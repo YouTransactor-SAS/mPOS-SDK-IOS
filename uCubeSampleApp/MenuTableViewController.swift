@@ -102,6 +102,48 @@ class MenuTableViewController: AlertPresenterTableViewController {
         }
     }
     
+    @IBAction func setQuickMode(_ sender: Any) {
+        guard isDeviceSelected() else {
+            return
+        }
+        
+       setSpeedMode(mode: 1)
+    }
+    
+    @IBAction func setSlowMode(_ sender: Any) {
+        guard isDeviceSelected() else {
+            return
+        }
+        
+        setSpeedMode(mode: 0)
+    }
+    
+    private func setSpeedMode(mode: UInt8){
+        
+        self.presentAlert(title: nil, message: "set Mode to \(mode)...")
+        
+        let command = SetInfoFieldCommand()
+        command.setMode(mode)
+        command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
+            switch event {
+            case .failed:
+                self.presentAlert(title: nil, message: "set Quick Mode failed", actions: [
+                    AlertAction(title: "OK")
+                ])
+            case .cancelled:
+                self.presentAlert(title: nil, message: "set Quick Mode cancelled", actions: [
+                    AlertAction(title: "OK")
+                ])
+            case .success:
+                self.presentAlert(title: nil, message: "set Quick Mode Success", actions: [
+                    AlertAction(title: "OK")
+                ])
+            default:
+                break
+            }
+        }))
+    }
+    
     @IBAction func changeLanguage(_ sender: Any) {
         guard isDeviceSelected() else {
             return
