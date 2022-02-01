@@ -1,5 +1,5 @@
 PODS:
-  - UCube (0.5.26):
+  - UCube (0.5.27):
     - Zip (~> 1.1)
   - Zip (1.1.0)
 
@@ -15,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../mPOS-SDK-IOS-Source-Code"
 
 SPEC CHECKSUMS:
-  UCube: aeed323eb8c908f2f5f69940bac34204808f8f92
+  UCube: 9697503a965a769e2ed376c61f1119dd2bb55e77
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: 4c46b5533141cfca671e01bfa7586de9d3e3bc3d
+PODFILE CHECKSUM: df762f6fa413f24212a2adca54aa632e7eef190a
 
 COCOAPODS: 1.10.1
