@@ -120,22 +120,29 @@ class MenuTableViewController: AlertPresenterTableViewController {
     
     private func setSpeedMode(mode: UInt8){
         
-        self.presentAlert(title: nil, message: "set Mode to \(mode)...")
+        var modeName : String
+        if(mode == 1) {
+            modeName = "Quick"
+        }else {
+            modeName = "Slow"
+        }
+        
+        self.presentAlert(title: nil, message: "set Mode to \(modeName)...")
         
         let command = SetInfoFieldCommand()
         command.setMode(mode)
         command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
             switch event {
             case .failed:
-                self.presentAlert(title: nil, message: "set Quick Mode failed", actions: [
+                self.presentAlert(title: nil, message: "set \(modeName) Mode failed", actions: [
                     AlertAction(title: "OK")
                 ])
             case .cancelled:
-                self.presentAlert(title: nil, message: "set Quick Mode cancelled", actions: [
+                self.presentAlert(title: nil, message: "set \(modeName) Mode cancelled", actions: [
                     AlertAction(title: "OK")
                 ])
             case .success:
-                self.presentAlert(title: nil, message: "set Quick Mode Success", actions: [
+                self.presentAlert(title: nil, message: "set \(modeName) Mode Success", actions: [
                     AlertAction(title: "OK")
                 ])
             default:
