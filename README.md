@@ -1,6 +1,6 @@
 # YouTransactor mPOS SDK - IOS
 
-###### Release 0.5.23
+###### Release 0.5.30
 
 <p>
   <img src="https://user-images.githubusercontent.com/59020462/86530425-e563bc00-beb8-11ea-821d-23996a2187da.png">
@@ -293,7 +293,6 @@ var paymentRequest = UCubePaymentRequest(amount: amountValue, currency: currency
         
 // optional variables
 paymentRequest.cardWaitTimeout = cardWaitTimeout
-paymentRequest.systemFailureInfo2 = false
 paymentRequest.forceDebug = false
 paymentRequest.transactionDate = Date()
 paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
@@ -338,8 +337,7 @@ paymentRequest.riskManagementTask = RiskManagementTask(presenter: self)
     private var forceAuthorization: Bool = false
     public var onlinePinBlockFormat: UInt8 = RPC.PIN.blockISO9564Format0
     public var readers: [CardEntryMode] = [.ICC, .NFC]
-    public var getSystemFailureInfoL2: Bool = false // user choose to get logs at the end of transaction
-    public var forceDebug: Bool = false // sdk can force getting logs at the end of transaction if status != approved
+    public var forceDebug: Bool = false
     
     /* input NFC & ICC */
     public var authorizationPlainTags: Set<Int>?
