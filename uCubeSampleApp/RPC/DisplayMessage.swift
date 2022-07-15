@@ -24,7 +24,8 @@ struct DisplayMessage {
     
     func display(_ message: String, completion: @escaping (_ success: Bool, _ message: String?) -> Void) {
         let command = DisplayMessageCommand(message: message)
-        //command.setClearConfig(1)
+        command.setClearConfig(5)
+        command.setTimeout(2)
         command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
             switch event {
             case .failed:

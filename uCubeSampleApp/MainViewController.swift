@@ -60,10 +60,14 @@ class MainViewController: UIViewController {
             }
         }
         appVersionLabel.text = "UCube Example v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "")"
-        frameworkVersionLabel.text = "UCube Framework v\(Bundle(for: BLEConnectionManager.self).infoDictionary?["CFBundleShortVersionString"] ?? "")"
+        frameworkVersionLabel.text = "UCube Framework v\(UCubeAPI.getVersionName())"
         
         BLEConnectionManager.shared.registerBatteryLevelChangedListener(batteryLevelListener:{(newLevel: UInt8) in
             LogManager.debug(message: "Received Terminal Battery level : \(newLevel)%")
+        })
+        
+        BLEConnectionManager.shared.registerConnectionStateListener(connectionStateListener: {( newState: ConnectionState) in
+            LogManager.debug(message: "Connection state changed listener : \(newState)")
         })
     }
 }
