@@ -48,7 +48,8 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.terminalChargingStatus,
             RPC.Tag.bleFirmwareVersion,
             RPC.Tag.resourcesFileVersion,
-            RPC.Tag.speedMode
+            RPC.Tag.speedMode,
+            RPC.Tag.buildConfiguration
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
         let command = GetInfoCommand(tags: uInt8Tags)
@@ -85,7 +86,7 @@ class DeviceInfoTableViewController: UITableViewController {
         guard deviceInfo != nil else {
             return 0
         }
-        return 15
+        return 16
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -153,6 +154,8 @@ class DeviceInfoTableViewController: UITableViewController {
                     text = "Speed Mode unknown"
                 }
             }
+        case 15:
+            text = "Build configuration : \(deviceInfo?.getBuildConfiguration() ?? "Unknown")"
         default:
             text = ""
         }

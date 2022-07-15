@@ -116,6 +116,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentRequest.skipCardRemoval = skipCardRemovalSwitch.isOn
         paymentRequest.skipStartingSteps = skipStartingStepsSwitch.isOn
         paymentRequest.retrieveF5Tag = retriveF5Switch.isOn
+        paymentRequest.tipRequired = false
         paymentRequest.authorizationPlainTags = [
             RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
             RPC.EMVTag.TAG_50_APPLICATION_LABEL,
