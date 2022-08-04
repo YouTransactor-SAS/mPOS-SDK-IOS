@@ -1,4 +1,4 @@
-# YouTransactor mPOS SDK - IOS
+# JPS mPOS SDK - IOS
 
 ###### Release 0.5.30
 
@@ -6,7 +6,7 @@
   <img src="https://user-images.githubusercontent.com/59020462/86530425-e563bc00-beb8-11ea-821d-23996a2187da.png">
 </p>
 
-This repository provides step by step documentation for the integration of YouTransactor's native iOS SDK to drive our proprietary uCube terminal to accept credit and debit card payments (incl. VISA, MasterCard, American Express and more).
+This repository provides step by step documentation for the integration of JPS's native iOS SDK to drive our proprietary YT-Touch terminal to accept credit and debit card payments (incl. VISA, MasterCard, American Express and more).
 
 For the Android version of the SDK, please refer to the [Android documentation](https://github.com/YouTransactor/mPOS-SDK-Android/blob/master/README.md)
 
@@ -14,33 +14,31 @@ For the Android version of the SDK, please refer to the [Android documentation](
 
 The interactions between the mobile device and the card terminal is a Master-Slave relation in which the mobile device drives the card terminal by calling the various terminal commands. The SDK provides payment, update, and log APIs. The main purpose of the SDK is to send RPC commands to the card terminal to sequence operations.
 
-The SDK includes the following modules: Connexion, RPC, MDM, Payment, Log.
+The SDK includes the following modules: Connection, RPC, MDM, Payment, Log.
 
-- The connexion module provides an 'IconnexionManager' interface, so you can use your implementation, and provides a Bluetooth Low Energy (BLE) implementaion.
-- The RPC module uses the IconnexionManager implementation to send RPC commands and receive responses from the card terminal. It provides an implementation of all the device RPCs.
-- The MDM module is an implementation of all YouTransactor's TMS services. The TMS server is mainly used to manage the firmware updates and ICC / NFC parameter configurations of the terminal. The SDK allows transparent update of the card terminal when using our TMS. This module is not required if you choose to use your own TMS.
+- The connection module provides an 'IconnectionManager' interface, so you can use your implementation, and provides a Bluetooth Low Energy (BLE) implementaion.
+- The RPC module uses the IconnectionManager implementation to send RPC commands and receive responses from the card terminal. It provides an implementation of all the device RPCs.
+- The MDM module is an implementation of all JPS's TMS services. The TMS server is mainly used to manage the firmware updates and ICC / NFC parameter configurations of the terminal. The SDK allows transparent update of the card terminal when using our TMS. This module is not required if you choose to use your own TMS.
 - The payment module implements the transaction processing for contact and contactless payments. For each transaction, a UCubePaymentRequest instance must be provided as input to configure the current operation. A callback is called at every progress step of the transaction, and a PaymentContext instance is returned when the transaction is complete and contains all the necessary data to record the transaction.
-- The SDK provide an ILogger interface and a default implementation to manage logs. Your application can choose between using the default implementation, which print the logs in a file that can be sent to our TMS server, or use your own implementation of ILogger.
+- The SDK provides an ILogger interface and a default implementation to manage logs. Your application can choose between using the default implementation, which prints the logs in an ainternal storage log file that can be then extract or sent online. Of course you can use your Ilogger implementation.
 
-All SDK features are gathered in a single Class: UCubeAPI. This class provides public static methods that your application can use to setup ConnexionManager, setup Logger, perform a payment, perform an update using our TMS...
+All SDK features are gathered in a single Class: UCubeAPI. This class provides public static methods that your application can use to setup ConnectionManager, setup Logger, perform a payment, perform an update using our TMS...etc.
 
 The SDK does not save any connection or transaction or update data.
 
-For more information about YouTransactor developer products, please refer to our [www.youtransactor.com](https://www.youtransactor.com).
+For more information about JPS products, please refer to our [www.youtransactor.com](https://www.youtransactor.com).
 
 ## I. General overview
 
 ### 1. Introduction
 
-The YouTransactor mPOS card terminal supported by this SDK is the uCube Touch. This documentation describes the YouTransactor iOS SDK implementation that complements the uCube Touch.
-
-The iOS SDK manages the Payment Transaction (EMV Contact, EMV CLess) by driving the uCube Touch. It provides all required transaction data to allow the payment application to connect to the payment processor for authorization and transaction completion. It also connects to the YouTransactor TMS (Terminal Management System) used to update the uCube Touch firmware and the EMV parameters.
+This documentation describes the iOS SDK implementation. The iOS SDK manages the Payment Transaction (EMV Contact, EMV CLess) by driving the YT-Touch. It provides all required EMV data to the payment application in order to do the authorization and transaction completion. The SDK provides remote update APIs to download and install the Firmware and the EMV configuration. The connected TMS server is JPS's TMS backend.
 
 This document presents the iOS SDK architecture, describes the transaction flow, details how the SDK can be integrated to an iOS payment application, and provides sample codes.
 
 ### 2. uCube Touch
 
-The uCube Touch is a lightweight and compact payment dongle. It can turn a tablet or a mobile device, Android or iOS, into a point of sale via a BLE connection to enable acceptance of contact and contactless payment cards.
+The YT-Touch is a lightweight and compact payment dongle. It can turn a tablet or a mobile device, Android or iOS, into a point of sale via a BLE connection to enable acceptance of contact and contactless payment cards.
 
 <p align="center">
   <img width="250" height="250" src="https://user-images.githubusercontent.com/59020462/77367842-437df080-6d5b-11ea-8e3a-423c3bc6b96b.png">
@@ -64,7 +62,7 @@ The Payment module integrates our SDK, delivered as a library, to create the pay
 
 ### 5. The Management System
 
-The management system can be administered by YouTransactor and offers the following services:
+The management system can be administered by JPS and offers the following services:
 
 - Management of the uCube fleet
 - Deployment of software updates
@@ -77,11 +75,11 @@ The MDM module of SDK implements all our management system services and the UCub
 
 #### 6.1 Initial configuration
 
-To be functional, in the scope of PCI PTS requirements, an SRED key shall be loaded securely in the device. This key is loaded locally by YouTransactor tools. The initial SALT is injected in the same way.
+To be functional, in the scope of PCI PTS requirement, SRED & Pin keys shall be loaded securely in the device. During the personalisation process JPS tools inject the certification chain. Afterwards, SRED & Pin keys can be loaded locally Or remotely using JPS Tools.
 
 #### 6.2 Switching On/Off
 
-The uCube lights up by pressing the "ON / OFF" button or when a BLE connection is established. Once the device is on, the payment process can be initiated. The uCube switches off either by pressing the "ON / OFF" button or after **X** minutes of inactivity (**X** = OFF timeout).
+The YT-Touch lights up by pressing the "ON / OFF" button or when a BLE connection is established. Once the device is on, the payment process can be initiated. The YT-Touch switches off either by pressing the "ON / OFF" button or after **X** minutes of inactivity (**X** = OFF timeout).
 
 #### 6.3 Update
 
@@ -101,9 +99,7 @@ Our TMS provides a Web Service that accepts a zip of log files. You can choose t
 
 ### 1. General Architecture
 
-This diagrams describes the general YouTransactor MPOS iOS SDK architecture.
-
-Only the uCubeAPI methods and the RPC commands are public and can be called by the payment application.
+The diagram below describes the SDK's architecture. The Application has access to the Payment, MDM and connection modules using the uCubeAPI interface. The RPC module is public so the application has a direct access to it.
 
 ![archi_sdk_mpos_ios](https://user-images.githubusercontent.com/59020462/86530543-d16c8a00-beb9-11ea-80b0-1dd8e927437e.png)
 
@@ -118,7 +114,7 @@ Only the uCubeAPI methods and the RPC commands are public and can be called by t
 ### 4. Prerequisites
 
 The `Deployment Target` of the SDK is `iOS 10.0`.
-Your Xcode project deployment target must be iOS 10.0 of later.
+Your Xcode project deployment target must be iOS 10.0 or later.
 
 ### 5. Installation
 
@@ -139,6 +135,8 @@ import UCube
 The APIs provided by UCubeAPI are:
 
 ```swift
+getVersionName()
+
 setConnexionManager(_ connexionManager: ConnexionManager)  
 
 setupLogger(_ logger: Loggable)  
@@ -146,10 +144,23 @@ setupLogger(_ logger: Loggable)
 pay(paymentRequest: UCubePaymentRequest,  
     didProgress: PaymentProgressClosure? = nil,  
     didFinish: PaymentFinishClosure)  
+    
+setLocale(locale : String, didProgress: ProgressTaskClosure? = nil, didFinish: FinishTaskClosure? = nil)
+
+geLocale(didProgress: ProgressTaskClosure? = nil, didFinish: FinishTaskClosure? = nil)
+
+getSupportedLocaleList(didProgress: ProgressTaskClosure? = nil, didFinish: FinishTaskClosure? = nil)
+
+sendData(commandID: UInt16,
+	outputSecurityMode: SecurityMode,
+	inputSecurityMode: SecurityMode,
+	payload: Data,
+	didProgress: SendDataProgressClosure? = nil,
+	didFinish: SendDataFinishClosure? = nil)
 
 close()
     
-/* YouTransactor TMS APIs */  
+/* TMS APIs */  
 
 mdmSetup()  
 
@@ -599,7 +610,7 @@ UCubeAPI.mdmRegister(
   }
 )
 ```
-At the register process the SDK send the public certificate of terminal to the TMS, so the server can verifie the YouTransactor signature and then generate and return an SSL certificate unique by terminal. This SSL certificate is used to call the rest of web services.
+At the register process the SDK send the public certificate of terminal to the TMS, so the server can verifie the JPS signature and then generate and return an SSL certificate unique by terminal. This SSL certificate is used to call the rest of web services.
 Note that the register should be done only once, at the selection of terminal. the SDK save the SSL certificate and to be removed you have to call this method below.
 
 ```swift
