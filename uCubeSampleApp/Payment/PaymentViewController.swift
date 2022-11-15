@@ -244,6 +244,14 @@ class PaymentViewController: AlertPresenterTableViewController {
             if let securedTagBlock = context.finalizationSecuredTagsValues {
                 LogManager.debug(message: "secured tag block: \(securedTagBlock.hexString)")
             }
+            
+            if let pinKsn = context.pinKsn {
+                LogManager.debug(message: "pin KSN: \(pinKsn.hexString)")
+            }
+            
+            if let onlinePinBlock = context.onlinePinBlock {
+                LogManager.debug(message: "online pin block: \(onlinePinBlock.hexString)")
+            }
         })
     }
     
