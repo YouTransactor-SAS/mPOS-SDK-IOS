@@ -69,5 +69,9 @@ class MainViewController: UIViewController {
         BLEConnectionManager.shared.registerConnectionStateListener(connectionStateListener: {( newState: ConnectionState) in
             LogManager.debug(message: "Connection state changed listener : \(newState)")
         })
+        
+        BLEConnectionManager.shared.registerSVPPRestartListener {
+            LogManager.debug(message: "Device crashed")
+        }
     }
 }

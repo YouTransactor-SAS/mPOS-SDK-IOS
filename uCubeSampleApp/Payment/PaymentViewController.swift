@@ -32,7 +32,7 @@ class PaymentViewController: AlertPresenterTableViewController {
     @IBOutlet weak var skipCardRemovalSwitch: UISwitch!
     @IBOutlet weak var skipStartingStepsSwitch: UISwitch!
     @IBOutlet weak var forceDebugSwitch: UISwitch!
-    @IBOutlet weak var retriveF5Switch: UISwitch!
+    @IBOutlet weak var retrieveF5TagSwitch: UISwitch!
     @IBOutlet weak var amountTextField: UITextField!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var paymentResultLabel: UILabel!
@@ -42,7 +42,8 @@ class PaymentViewController: AlertPresenterTableViewController {
     
     private var transactionType: TransactionType = .purchase
     private var currency: Currency = UCubePaymentRequest.currencyEUR
-    private var emvPaystateMachine : EMVPaymentStateMachine?
+    private var emvPayStateMachine : EMVPaymentStateMachine?
+    private var forceDebug : Bool = false
     
     
     override func viewDidLoad() {
@@ -73,7 +74,7 @@ class PaymentViewController: AlertPresenterTableViewController {
     
     @IBAction func cancelPayment(_ sender: Any) {
         guard
-            let paymentStateMachine = self.emvPaystateMachine
+            let paymentStateMachine = self.emvPayStateMachine
             else {
                 return
         }
@@ -109,13 +110,14 @@ class PaymentViewController: AlertPresenterTableViewController {
         // optional variables
         paymentRequest.cardWaitTimeout = cardWaitTimeout
         paymentRequest.systemFailureInfo2 = false
-        paymentRequest.forceDebug = forceDebugSwitch.isOn
+        self.forceDebug = forceDebugSwitch.isOn
+        paymentRequest.forceDebug = self.forceDebug
         paymentRequest.transactionDate = Date()
         paymentRequest.forceAuthorization = forceAuthorizationSwitch.isOn
         paymentRequest.forceOnlinePIN = forceOnlinePinSwitch.isOn
         paymentRequest.skipCardRemoval = skipCardRemovalSwitch.isOn
         paymentRequest.skipStartingSteps = skipStartingStepsSwitch.isOn
-        paymentRequest.retrieveF5Tag = retriveF5Switch.isOn
+        paymentRequest.retrieveF5Tag = retrieveF5TagSwitch.isOn
         paymentRequest.tipRequired = false
         paymentRequest.authorizationPlainTags = [
             RPC.EMVTag.TAG_4F_APPLICATION_IDENTIFIER,
@@ -177,7 +179,7 @@ class PaymentViewController: AlertPresenterTableViewController {
         paymentResultLabel.isHidden = true
         startButton.isHidden = true
         cancelButton.isHidden = false
-        emvPaystateMachine = UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
+        emvPayStateMachine = UCubeAPI.pay(request: paymentRequest, didProgress: { (state: PaymentState, context: PaymentContext) in
             LogManager.debug(message: "Payment did progress: \(state.name)")
             self.paymentStateLabel.text = state.name
             self.paymentStateLabel.isHidden = false
@@ -192,6 +194,14 @@ class PaymentViewController: AlertPresenterTableViewController {
             
         }, didFinish: { (context: PaymentContext) in
             LogManager.debug(message: "Payment did finish with status: \(context.paymentStatus?.name ?? "unknown")")
+            
+            if(self.forceDebug) {
+                if (context.tagF4 == nil || context.tagF4?.count ?? 0 <= 22) {
+                    self.presentAlert(message: "Warning! F4 Tag is empty", actions: [
+                        AlertAction(title: "OK")
+                    ])
+                }
+            }
             
             // UI
             self.paymentResultLabel.text = (context.paymentStatus?.name ?? "unknown")
@@ -233,6 +243,14 @@ class PaymentViewController: AlertPresenterTableViewController {
             }
             if let securedTagBlock = context.finalizationSecuredTagsValues {
                 LogManager.debug(message: "secured tag block: \(securedTagBlock.hexString)")
+            }
+            
+            if let pinKsn = context.pinKsn {
+                LogManager.debug(message: "pin KSN: \(pinKsn.hexString)")
+            }
+            
+            if let onlinePinBlock = context.onlinePinBlock {
+                LogManager.debug(message: "online pin block: \(onlinePinBlock.hexString)")
             }
         })
     }

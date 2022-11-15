@@ -49,7 +49,8 @@ class DeviceInfoTableViewController: UITableViewController {
             RPC.Tag.bleFirmwareVersion,
             RPC.Tag.resourcesFileVersion,
             RPC.Tag.speedMode,
-            RPC.Tag.buildConfiguration
+            RPC.Tag.buildConfiguration,
+            RPC.Tag.nonSecureFirmwareVersion
         ]
         let uInt8Tags = tags.map{ UInt8($0) }
         let command = GetInfoCommand(tags: uInt8Tags)
@@ -86,7 +87,7 @@ class DeviceInfoTableViewController: UITableViewController {
         guard deviceInfo != nil else {
             return 0
         }
-        return 16
+        return 17
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -103,16 +104,18 @@ class DeviceInfoTableViewController: UITableViewController {
         case 3:
             text = "SVPP version: \(deviceInfo?.getSvppFirmware() ?? "")"
         case 4:
-            text = "Terminal Part Number: \(deviceInfo?.getPartNumber() ?? "")"
+            text = "Non Secure FW Version: \(deviceInfo?.getNonSecureFirmwareVersion() ?? "")"
         case 5:
-            text = "OS Version: \(deviceInfo?.getOsVersion() ?? "")"
+            text = "Terminal Part Number: \(deviceInfo?.getPartNumber() ?? "")"
         case 6:
-            text = "Automatic power off time out: \(deviceInfo?.getAutoPowerOffTimeout()?.description ?? "")"
+            text = "OS Version: \(deviceInfo?.getOsVersion() ?? "")"
         case 7:
-            text = "EMV ICC Config Version: \(deviceInfo?.getIccEmvConfigVersion() ?? "")"
+            text = "Automatic power off time out: \(deviceInfo?.getAutoPowerOffTimeout()?.description ?? "")"
         case 8:
-            text = "EMV NFC Config Version: \(deviceInfo?.getNfcEmvConfigVersion() ?? "")"
+            text = "EMV ICC Config Version: \(deviceInfo?.getIccEmvConfigVersion() ?? "")"
         case 9:
+            text = "EMV NFC Config Version: \(deviceInfo?.getNfcEmvConfigVersion() ?? "")"
+        case 10:
             if let supportedLocaleList = deviceInfo?.getSupportedLocaleList() {
                 text = "Supported locale list :"
                 for locale in supportedLocaleList {
@@ -120,9 +123,9 @@ class DeviceInfoTableViewController: UITableViewController {
                     text += ", "
                 }
             }
-        case 10:
-            text = "Merchant Locale : \(deviceInfo?.getMerchantLocale() ?? "")"
         case 11:
+            text = "Merchant Locale : \(deviceInfo?.getMerchantLocale() ?? "")"
+        case 12:
             if(deviceInfo?.getChargingStatus() == nil) {
                 text = "unknown"
             }else {
@@ -137,8 +140,6 @@ class DeviceInfoTableViewController: UITableViewController {
                     text = "Battery State : unknown"
                 }
             }
-        case 12:
-            text = "BLE version : \(deviceInfo?.getBleFirmwareVersion() ?? "")"
         case 13:
             text = "Resources file version : \(deviceInfo?.getResourcesFileVersion() ?? "")"
         case 14:
@@ -156,6 +157,8 @@ class DeviceInfoTableViewController: UITableViewController {
             }
         case 15:
             text = "Build configuration : \(deviceInfo?.getBuildConfiguration() ?? "Unknown")"
+        case 16:
+            text = "BLE version : \(deviceInfo?.getBleFirmwareVersion() ?? "")"
         default:
             text = ""
         }
