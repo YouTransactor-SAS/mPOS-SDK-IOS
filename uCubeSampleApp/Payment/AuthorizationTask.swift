@@ -69,16 +69,16 @@ class AuthorizationTask: AuthorizationTasking {
             AlertAction(title: "Approved", handler: {
                 self.end(choice: 0)
             }),
-            AlertAction(title: "Declined", handler: {
+            AlertAction(title: "SCA (0x1A)", handler: {
                 self.end(choice: 1)
             }),
-            AlertAction(title: "SCA VISA / online pin request", handler: {
+            AlertAction(title: "SCA (0x70)", handler: {
                 self.end(choice: 2)
             }),
-            AlertAction(title: "Unable to go online", handler: {
+            AlertAction(title: "Declined", handler: {
                 self.end(choice: 3)
             }),
-            AlertAction(title: "online pin request (Not VISA)", handler: {
+            AlertAction(title: "Unable to go online", handler: {
                 self.end(choice: 4)
             })
         ])
@@ -99,13 +99,13 @@ class AuthorizationTask: AuthorizationTasking {
         case 0:
             authorizationResponse = Data([0x8A, 0x02, 0x30, 0x30])
         case 1:
-            authorizationResponse = Data([0x8A, 0x02, 0x30, 0x35])
-        case 2:
             authorizationResponse = Data([0x8A, 0x02, 0x31, 0x41])
+        case 2:
+            authorizationResponse = Data([0x8A, 0x02, 0x37, 0x30, 0xDF, 0x76, 0x01, 0x01])
         case 3:
-            authorizationResponse = Data([0x8A, 0x02, 0x39, 0x38])
+            authorizationResponse = Data([0x8A, 0x02, 0x30, 0x35])
         case 4:
-            authorizationResponse = Data([0x8A, 0x02, 0x37, 0x30])
+            authorizationResponse = Data([0x8A, 0x02, 0x39, 0x38])
         default:
             break
         }

@@ -252,6 +252,9 @@ class PaymentViewController: AlertPresenterTableViewController {
             if let onlinePinBlock = context.onlinePinBlock {
                 LogManager.debug(message: "online pin block: \(onlinePinBlock.hexString)")
             }
+            
+            LogManager.debug(message: "contains Online Pin Challenge Response: \(context.containsOnlinePinChallengeResponse)")
+            
         })
     }
     
