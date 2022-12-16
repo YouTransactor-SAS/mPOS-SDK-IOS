@@ -105,7 +105,7 @@ class AuthorizationTask: AuthorizationTasking {
         case 3:
             authorizationResponse = Data([0x8A, 0x02, 0x39, 0x38])
         case 4:
-            authorizationResponse = Data([0x8A, 0x02, 0x37, 0x30])
+            authorizationResponse = Data([0x8A, 0x02, 0x37, 0x30, 0xDF, 0x76, 0x01, 0x01])
         default:
             break
         }
