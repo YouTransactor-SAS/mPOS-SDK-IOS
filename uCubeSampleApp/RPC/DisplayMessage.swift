@@ -26,6 +26,8 @@ struct DisplayMessage {
         let command = DisplayMessageCommand(message: message)
         command.setClearConfig(5)
         command.setTimeout(2)
+        command.setXPosition(0xFF)
+        command.setYPosition(0x00)
         command.execute(monitor: TaskMonitor(eventHandler: { (event: TaskEvent, parameters: [Any]) in
             switch event {
             case .failed:
